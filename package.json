@@ -5,9 +5,10 @@
   "private": true,
   "scripts": {
     "build": "pnpm -r run build",
-    "test": "pnpm -r run test",
+    "test": "pnpm -r run test -- --run",
     "lint": "pnpm -r run lint",
-    "format": "pnpm -r run format"
+    "format": "pnpm -r run format",
+    "dev:web": "pnpm --filter nutri-web dev"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.0.0",
