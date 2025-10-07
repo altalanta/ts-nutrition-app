@@ -9,6 +9,9 @@ A TypeScript-based nutrition tracking system that loads food and nutrient data, 
   /packages
     /nutri-core      # Pure TypeScript library (framework-agnostic)
     /nutri-cli       # CLI wrapper around nutri-core
+    /nutri-importers # HTTP clients for FDC, Nutritionix, OFF
+  /apps
+    /nutri-web       # Next.js web app with search & reports
   /data              # Sample data files (CSV/YAML)
   /tests             # Vitest tests
   package.json
@@ -25,6 +28,9 @@ A TypeScript-based nutrition tracking system that loads food and nutrient data, 
 - **Gap Analysis**: Identify deficient and surplus nutrients
 - **Unit Conversion**: Proper handling of mg/µg conversions with branded types for type safety
 - **CLI Interface**: Command-line tool for generating reports
+- **Data Importers**: HTTP clients for USDA FDC, Nutritionix, and Open Food Facts with intelligent merging
+- **Barcode Support**: Look up foods by barcode (EAN/UPC) across multiple data sources
+- **Web Interface**: Next.js app for searching foods, scanning barcodes, and viewing reports
 
 ## Installation
 
@@ -78,6 +84,7 @@ const deficient = getDeficientNutrients(report, 0.9);
 ### CLI Usage
 
 ```bash
+# Generate weekly report from food log
 pnpm --filter nutri-cli exec nutri report \
   --stage pregnancy_trimester2 \
   --log data/log_example.csv \
@@ -85,6 +92,55 @@ pnpm --filter nutri-cli exec nutri report \
   --schema data/schema.yml \
   --foods data/sample_foods.csv \
   --out report.json
+
+# Search for foods by name
+pnpm --filter nutri-cli exec nutri find --query "salmon"
+
+# Scan barcode and generate report
+pnpm --filter nutri-cli exec nutri scan \
+  --barcode 041196910184 \
+  --stage pregnancy_trimester2 \
+  --out report.json
+```
+
+### Web Usage
+
+```bash
+# Start the web development server
+pnpm run dev:web
+
+# Open http://localhost:3000
+```
+
+The web app provides:
+- **Search Tab**: Search for foods by name and add to your daily log
+- **Barcode Tab**: Enter barcode numbers to look up products
+- **Log Tab**: View your daily food entries and generate weekly reports
+
+## Data Importers
+
+The system includes HTTP clients for three major nutrition data sources:
+
+- **USDA FoodData Central (FDC)**: Government database with comprehensive nutrient data
+- **Nutritionix**: Commercial database with strong barcode and branded product coverage
+- **Open Food Facts (OFF)**: Open-source database with global barcode coverage
+
+### Data Merging Strategy
+
+When multiple sources provide data for the same product:
+
+1. **Primary Source Priority**: FDC > Nutritionix > OFF
+2. **Nutrient Selection**: For each nutrient, choose the maximum non-zero value across all sources
+3. **Metadata Enhancement**: Use the best available brand, serving size, and barcode information
+
+### Environment Setup
+
+Create a `.env` file based on `.env.example`:
+
+```bash
+# Nutritionix API credentials (optional)
+NUTRITIONIX_APP_ID=your_app_id
+NUTRITIONIX_API_KEY=your_api_key
 ```
 
 ## Data Formats
