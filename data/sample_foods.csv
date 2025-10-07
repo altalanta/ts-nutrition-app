@@ -1,0 +1,9 @@
+food_name,brand,category,fdc_id,serving_name,serving_size_g,DHA_mg,Selenium_µg,Vitamin_A_RAE_µg,Zinc_mg,Iron_mg,Iodine_µg,Choline_mg,Folate_DFE_µg
+Atlantic salmon,Fresh Market,Fish,123456,100g fillet,100,120,25,0,1.2,2.1,0,85,15
+Large egg,Organic Valley,Dairy,234567,1 large egg,50,0,15,74,0.6,0.9,25,147,22
+Whole milk,Dairy Co-op,Dairy,345678,1 cup (240ml),240,0,3,149,1.0,0.1,0,38,12
+Spinach,Fresh Greens,Vegetables,456789,1 cup raw,30,0,1,141,0.2,0.8,0,18,58
+Fortified cereal,Healthy Brands,Grains,567890,1 cup,30,0,20,150,3.0,4.5,0,25,100
+Greek yogurt,Probiotic Plus,Dairy,678901,1 cup,245,0,25,0,1.5,0.2,0,40,20
+Black beans,Dried Goods,Legumes,789012,1/2 cup cooked,86,0,2,0,1.0,1.8,0,45,128
+Seaweed (nori),Ocean Harvest,Seaweed,890123,1 sheet,3,0,0.9,9,0.1,0.2,42,0,10

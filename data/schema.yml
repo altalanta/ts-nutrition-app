@@ -1,0 +1,11 @@
+nutrients:
+  DHA: { unit: mg, aliases: ["docosahexaenoic acid","n-3 DHA"] }
+  Selenium: { unit: µg, aliases: ["Se"] }
+  Vitamin_A_RAE: { unit: µg, aliases: ["VitA_RAE","Retinol Activity Equivalents"] }
+  Zinc: { unit: mg }
+  Iron: { unit: mg }
+  Iodine: { unit: µg }
+  Choline: { unit: mg }
+  Folate_DFE: { unit: µg }
+serving_fields: [serving_size_g, serving_name]
+food_fields_required: [food_name, brand, category, fdc_id]
