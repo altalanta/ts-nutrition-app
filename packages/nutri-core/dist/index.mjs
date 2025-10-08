@@ -4,6 +4,21 @@ import {
   normalizeFromImporter
 } from "./chunk-NOSSD5S7.mjs";
 
+// src/types.ts
+var NUTRIENT_KEYS = [
+  "DHA",
+  "Selenium",
+  "Vitamin_A_RAE",
+  "Zinc",
+  "Iron",
+  "Iodine",
+  "Choline",
+  "Folate_DFE"
+];
+function makeRecord(init) {
+  return Object.fromEntries(NUTRIENT_KEYS.map((k) => [k, init(k)]));
+}
+
 // src/units.ts
 function toMilligram(micrograms) {
   return micrograms / 1e3;
@@ -132,29 +147,40 @@ import dayjs from "dayjs";
 
 // src/limits.ts
 import { z as z2 } from "zod";
-var LimitsSchema = z2.object({
+var rangeStr = z2.string().regex(/^\d+(\.\d+)?\.\.\d+(\.\d+)?$/);
+var rangeToTuple = (s) => {
+  const [lo, hi] = s.split("..").map(Number);
+  return [lo, hi];
+};
+var limitsSchema = z2.object({
   units_base: z2.record(z2.string()),
-  UL: z2.record(z2.record(z2.number().nullable())),
-  plausibility_per_100g: z2.record(z2.tuple([z2.number(), z2.number()])),
-  confidence_weights: z2.record(z2.number())
+  UL: z2.object({
+    pregnancy: z2.record(z2.number().nullable()),
+    lactation: z2.record(z2.number().nullable())
+  }),
+  plausibility_per_100g: z2.record(rangeStr.transform(rangeToTuple)),
+  confidence_weights: z2.object({
+    FDC: z2.number(),
+    NUTRITIONIX: z2.number(),
+    OFF: z2.number()
+  })
 });
 function loadLimits(limitsPath) {
   const fs = __require("fs");
   const yaml = __require("yaml");
   const yamlContent = fs.readFileSync(limitsPath, "utf8");
   const parsed = yaml.parse(yamlContent);
-  const processed = {
-    ...parsed,
-    plausibility_per_100g: Object.fromEntries(
-      Object.entries(parsed.plausibility_per_100g).map(([key, value]) => {
-        const match = value.match(/^(\d+)\.\.(\d+)$/);
-        if (!match)
-          throw new Error(`Invalid plausibility range format: ${value}`);
-        return [key, [parseInt(match[1]), parseInt(match[2])]];
-      })
-    )
+  const validated = limitsSchema.parse(parsed);
+  const plausibility = makeRecord((k) => validated.plausibility_per_100g[k] ?? [0, Infinity]);
+  return {
+    units_base: validated.units_base,
+    UL: {
+      pregnancy: makeRecord((k) => validated.UL.pregnancy[k] ?? null),
+      lactation: makeRecord((k) => validated.UL.lactation[k] ?? null)
+    },
+    plausibility_per_100g: plausibility,
+    confidence_weights: validated.confidence_weights
   };
-  return LimitsSchema.parse(processed);
 }
 function applyPlausibilityGuards(food, limits) {
   const flags = [];
@@ -176,8 +202,13 @@ function applyPlausibilityGuards(food, limits) {
   return { food: guardedFood, flags };
 }
 function evaluateULs(report, stage, limits) {
-  const ulReport = {};
-  for (const nutrient of Object.keys(limits.UL[stage] || {})) {
+  const ulReport = makeRecord((k) => ({
+    total: 0,
+    ul: null,
+    overBy: null,
+    severity: "none"
+  }));
+  for (const nutrient of NUTRIENT_KEYS) {
     const ul = limits.UL[stage]?.[nutrient];
     const total = report.nutrients[nutrient]?.weekly_total || 0;
     let severity = "none";
@@ -299,7 +330,7 @@ function computeWeekly({
       percent_target: percentTarget,
       gap_surplus: gapSurplus
     };
-    provenance[nutrient] = nutrientProvenance.source;
+    provenance[nutrient] = nutrientProvenance;
     confidence[nutrient] = nutrientConfidence;
   }
   const deficientNutrients = [];
@@ -388,7 +419,7 @@ export {
   FoodItemSchema,
   FoodLogEntrySchema,
   GoalsSchema,
-  LimitsSchema,
+  NUTRIENT_KEYS,
   NutrientInfoSchema,
   SchemaSchema,
   applyPlausibilityGuards,
@@ -401,11 +432,13 @@ export {
   evaluateULs,
   foodItemToNormalized,
   getDeficientNutrients,
+  limitsSchema,
   loadFoodLog,
   loadFoods,
   loadGoals,
   loadLimits,
   loadSchema,
+  makeRecord,
   normalizeFromImporter,
   toMicrogram,
   toMilligram

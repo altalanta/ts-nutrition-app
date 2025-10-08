@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { NutrientKey, LifeStage, FoodDB, Goals, Schema, ReportJSON, FoodLogEntry, Limits, ULAlert, NutrientProvenance } from './types';
+import { NutrientKey, LifeStage, FoodDB, Goals, Schema, ReportJSON, FoodLogEntry, Limits, ULAlert, NutrientProvenance, NUTRIENT_KEYS, makeRecord } from './types';
 import { convertToBaseUnit } from './units';
 import { applyPlausibilityGuards, evaluateULs, calculateConfidence, createProvenance } from './limits';
 
@@ -30,10 +30,10 @@ export function computeWeekly({
   });
 
   if (parsed.errors.length > 0) {
-    throw new Error(`CSV parsing errors: ${parsed.errors.map((e: any) => e.message).join(', ')}`);
+    throw new Error(`CSV parsing errors: ${parsed.errors.map((e: { message: string }) => e.message).join(', ')}`);
   }
 
-  const logEntries: FoodLogEntry[] = parsed.data.map((row: any) => ({
+  const logEntries: FoodLogEntry[] = parsed.data.map((row: { date: string; food_name: string; servings: string }) => ({
     date: row.date,
     food_name: row.food_name,
     servings: Number(row.servings),
@@ -122,8 +122,8 @@ export function computeWeekly({
     // Calculate provenance and confidence from food sources
     // For now, use a simplified approach - in a real implementation,
     // this would aggregate provenance from all foods that contributed to this nutrient
-    const nutrientConfidence = calculateConfidence('derived', weeklyTotal, limits || { confidence_weights: {} } as Limits);
-    const nutrientProvenance = createProvenance('derived', nutrientConfidence);
+    const nutrientConfidence = calculateConfidence('derived' as 'derived', weeklyTotal, limits || { confidence_weights: {} } as Limits);
+    const nutrientProvenance = createProvenance('derived' as 'derived', nutrientConfidence);
 
     nutrients[nutrient] = {
       weekly_total: weeklyTotal,
@@ -132,7 +132,7 @@ export function computeWeekly({
       gap_surplus: gapSurplus,
     };
 
-    provenance[nutrient] = nutrientProvenance.source;
+    provenance[nutrient] = nutrientProvenance;
     confidence[nutrient] = nutrientConfidence;
   }
 
@@ -152,7 +152,7 @@ export function computeWeekly({
   }
 
   // Calculate UL alerts if limits are provided
-  let ulAlerts: Record<NutrientKey, { total: number; ul: number|null; overBy: number | null; severity: 'none' | 'warn' | 'error' }> = {} as any;
+  let ulAlerts: Record<NutrientKey, ULAlert> = {} as any;
   if (limits) {
     ulAlerts = evaluateULs({ nutrients }, stage, limits);
 
@@ -166,7 +166,7 @@ export function computeWeekly({
     }
   }
 
-  // Aggregate provenance flags from all foods
+  // For now, no flags from food processing
   const allFlags: string[] = [];
 
   const totalGapSurplus = Object.values(nutrients)

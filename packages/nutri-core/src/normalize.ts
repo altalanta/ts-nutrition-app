@@ -1,5 +1,16 @@
-import { NormalizedFood } from 'nutri-importers';
-import { Schema, FoodItem } from './types';
+import { Schema, FoodItem, NutrientKey } from './types';
+
+// Local interface for NormalizedFood (to avoid circular dependency)
+interface NormalizedFood {
+  source: string;
+  source_id: string;
+  food_name: string;
+  brand?: string;
+  serving_name?: string;
+  serving_size_g?: number;
+  barcode?: string;
+  nutrients: Record<NutrientKey, number>;
+}
 
 /**
  * Convert a NormalizedFood from importers to a FoodItem for the core engine
@@ -10,7 +21,7 @@ export function normalizeFromImporter(food: NormalizedFood, schema: Schema): Foo
 
   // Map nutrients from NormalizedFood to FoodItem format
   for (const [nutrientKey, value] of Object.entries(food.nutrients)) {
-    const nutrientInfo = schema.nutrients[nutrientKey as keyof typeof schema.nutrients];
+    const nutrientInfo = schema.nutrients[nutrientKey as NutrientKey];
     if (nutrientInfo) {
       // Convert from base units back to the nutrient's native unit
       const unitValue = value; // Already in base units (mg/µg)
@@ -53,5 +64,6 @@ export function foodItemToNormalized(foodItem: FoodItem, schema: Schema): Normal
     nutrients,
   };
 }
+
 
 

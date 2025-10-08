@@ -58,3 +58,4 @@ export interface TokenComponents {
   v: string;
   signature: string;
 }
+

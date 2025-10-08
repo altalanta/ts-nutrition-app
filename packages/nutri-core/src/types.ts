@@ -1,12 +1,3 @@
-export type NutrientKey =
-  | 'DHA'
-  | 'Selenium'
-  | 'Vitamin_A_RAE'
-  | 'Zinc'
-  | 'Iron'
-  | 'Iodine'
-  | 'Choline'
-  | 'Folate_DFE';
 
 export type LifeStage = 'pregnancy_trimester2' | 'pregnancy_trimester1' | 'pregnancy_trimester3' | 'lactation' | 'preconception' | 'interpregnancy';
 
@@ -25,6 +16,25 @@ export interface Goals {
   [lifeStage: string]: Record<NutrientKey, number>;
 }
 
+// Nutrient key list and derived types
+export const NUTRIENT_KEYS = [
+  'DHA',
+  'Selenium',
+  'Vitamin_A_RAE',
+  'Zinc',
+  'Iron',
+  'Iodine',
+  'Choline',
+  'Folate_DFE'
+] as const;
+
+export type NutrientKey = typeof NUTRIENT_KEYS[number];
+
+// Helper to build typed records
+export function makeRecord<T>(init: (k: NutrientKey) => T): Record<NutrientKey, T> {
+  return Object.fromEntries(NUTRIENT_KEYS.map(k => [k, init(k)])) as Record<NutrientKey, T>;
+}
+
 export interface FoodItem {
   food_name: string;
   brand: string;
@@ -32,14 +42,14 @@ export interface FoodItem {
   fdc_id: number;
   serving_name: string;
   serving_size_g: number;
-  [key: `DHA_mg`]: number;
-  [key: `Selenium_µg`]: number;
-  [key: `Vitamin_A_RAE_µg`]: number;
-  [key: `Zinc_mg`]: number;
-  [key: `Iron_mg`]: number;
-  [key: `Iodine_µg`]: number;
-  [key: `Choline_mg`]: number;
-  [key: `Folate_DFE_µg`]: number;
+  DHA_mg: number;
+  Selenium_µg: number;
+  Vitamin_A_RAE_µg: number;
+  Zinc_mg: number;
+  Iron_mg: number;
+  Iodine_µg: number;
+  Choline_mg: number;
+  Folate_DFE_µg: number;
 }
 
 export interface FoodLogEntry {
@@ -52,18 +62,14 @@ export interface FoodDB {
   [foodName: string]: FoodItem;
 }
 
-export interface NutrientIntake {
-  [nutrient: NutrientKey]: number;
-}
+export type NutrientIntake = Record<NutrientKey, number>;
 
-export interface WeeklyReport {
-  [nutrient: NutrientKey]: {
-    weekly_total: number;
-    weekly_goal: number;
-    percent_target: number;
-    gap_surplus: number;
-  };
-}
+export type WeeklyReport = Record<NutrientKey, {
+  weekly_total: number;
+  weekly_goal: number;
+  percent_target: number;
+  gap_surplus: number;
+}>;
 
 export interface Limits {
   units_base: Record<string, string>;
@@ -72,15 +78,23 @@ export interface Limits {
   confidence_weights: Record<string, number>;
 }
 
-export interface ULAlert {
+export type ULStatus = 'none' | 'warn' | 'error';
+
+export type ULRow = {
   total: number;
   ul: number | null;
   overBy: number | null;
-  severity: 'none' | 'warn' | 'error';
-}
+  severity: ULStatus;
+};
+
+export type ULAlert = ULRow;
+
+export type ULReport = Record<NutrientKey, ULAlert>;
+
+export type NutrientProvenanceSource = 'FDC' | 'NUTRITIONIX' | 'OFF' | 'derived' | 'none';
 
 export interface NutrientProvenance {
-  source: 'FDC' | 'NUTRITIONIX' | 'OFF' | 'derived' | 'none';
+  source: NutrientProvenanceSource;
   confidence: number; // 0-1
   flags: string[]; // e.g., ['plausibility_clamped', 'conflict_detected']
 }

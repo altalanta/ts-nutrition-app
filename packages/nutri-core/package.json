@@ -2,8 +2,16 @@
   "name": "nutri-core",
   "version": "1.0.0",
   "description": "Pure TypeScript nutrition engine for tracking nutrient intake",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
+    }
+  },
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "test": "vitest run",
@@ -14,8 +22,7 @@
     "zod": "^3.22.0",
     "papaparse": "^5.4.0",
     "yaml": "^2.3.0",
-    "dayjs": "^1.11.0",
-    "nutri-importers": "workspace:*"
+    "dayjs": "^1.11.0"
   },
   "devDependencies": {
     "@types/papaparse": "^5.3.0",

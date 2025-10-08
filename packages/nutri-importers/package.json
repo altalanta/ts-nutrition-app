@@ -2,8 +2,16 @@
   "name": "nutri-importers",
   "version": "1.0.0",
   "description": "HTTP clients and normalizers for USDA FDC, Nutritionix, and Open Food Facts",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
+    }
+  },
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "test": "vitest run",
@@ -25,5 +33,6 @@
   "author": "Nutrition Engine Team",
   "license": "MIT"
 }
+
 
 

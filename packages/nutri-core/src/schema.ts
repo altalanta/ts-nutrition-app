@@ -79,7 +79,7 @@ export function loadFoods(csvPath: string, schema: Schema): Record<string, FoodI
   });
 
   if (parsed.errors.length > 0) {
-    throw new Error(`CSV parsing errors: ${parsed.errors.map((e: any) => e.message).join(', ')}`);
+    throw new Error(`CSV parsing errors: ${parsed.errors.map((e: { message: string }) => e.message).join(', ')}`);
   }
 
   const foodDB: Record<string, FoodItem> = {};
@@ -125,7 +125,7 @@ export function loadFoodLog(csvPath: string): FoodLogEntry[] {
   });
 
   if (parsed.errors.length > 0) {
-    throw new Error(`CSV parsing errors: ${parsed.errors.map((e: any) => e.message).join(', ')}`);
+    throw new Error(`CSV parsing errors: ${parsed.errors.map((e: { message: string }) => e.message).join(', ')}`);
   }
 
   return parsed.data.map((row: any) => FoodLogEntrySchema.parse({
