@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { NutrientKey, Limits, FoodItem, ULReport, NutrientProvenance, LifeStage } from './types';
 
-// Schema validation for limits.yml
+// Schema validation for limits.yml (after processing)
 export const LimitsSchema = z.object({
   units_base: z.record(z.string()),
   UL: z.record(z.record(z.number().nullable())),
-  plausibility_per_100g: z.record(z.string().regex(/^\d+\.\.\d+$/)),
+  plausibility_per_100g: z.record(z.tuple([z.number(), z.number()])),
   confidence_weights: z.record(z.number()),
 });
 
@@ -21,10 +21,10 @@ export function loadLimits(limitsPath: string): Limits {
   const processed = {
     ...parsed,
     plausibility_per_100g: Object.fromEntries(
-      Object.entries(parsed.plausibility_per_100g).map(([key, value]: [string, string]) => {
+      Object.entries(parsed.plausibility_per_100g as Record<string, string>).map(([key, value]: [string, string]) => {
         const match = value.match(/^(\d+)\.\.(\d+)$/);
         if (!match) throw new Error(`Invalid plausibility range format: ${value}`);
-        return [key, [parseInt(match[1]), parseInt(match[2])]];
+        return [key, [parseInt(match[1]), parseInt(match[2])] as [number, number]];
       })
     )
   };

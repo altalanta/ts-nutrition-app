@@ -135,7 +135,7 @@ import { z as z2 } from "zod";
 var LimitsSchema = z2.object({
   units_base: z2.record(z2.string()),
   UL: z2.record(z2.record(z2.number().nullable())),
-  plausibility_per_100g: z2.record(z2.string().regex(/^\d+\.\.\d+$/)),
+  plausibility_per_100g: z2.record(z2.tuple([z2.number(), z2.number()])),
   confidence_weights: z2.record(z2.number())
 });
 function loadLimits(limitsPath) {
@@ -263,7 +263,6 @@ function computeWeekly({
       guardedFood = guardResult.food;
       plausibilityFlags = guardResult.flags;
     }
-    const enhancedFood = foodItem;
     for (const nutrient of Object.keys(schema.nutrients)) {
       const nutrientInfo = schema.nutrients[nutrient];
       const fieldName = `${nutrient}_${nutrientInfo.unit}`;
@@ -300,7 +299,7 @@ function computeWeekly({
       percent_target: percentTarget,
       gap_surplus: gapSurplus
     };
-    provenance[nutrient] = nutrientProvenance;
+    provenance[nutrient] = nutrientProvenance.source;
     confidence[nutrient] = nutrientConfidence;
   }
   const deficientNutrients = [];
@@ -327,13 +326,6 @@ function computeWeekly({
     }
   }
   const allFlags = [];
-  if ("provenance" in foodDB) {
-    Object.values(foodDB).forEach((food) => {
-      Object.values(food.provenance).forEach((prov) => {
-        allFlags.push(...prov.flags);
-      });
-    });
-  }
   const totalGapSurplus = Object.values(nutrients).reduce((sum, { gap_surplus }) => sum + Math.abs(gap_surplus), 0);
   return {
     stage,

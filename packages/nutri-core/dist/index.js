@@ -244,7 +244,7 @@ var import_zod2 = require("zod");
 var LimitsSchema = import_zod2.z.object({
   units_base: import_zod2.z.record(import_zod2.z.string()),
   UL: import_zod2.z.record(import_zod2.z.record(import_zod2.z.number().nullable())),
-  plausibility_per_100g: import_zod2.z.record(import_zod2.z.string().regex(/^\d+\.\.\d+$/)),
+  plausibility_per_100g: import_zod2.z.record(import_zod2.z.tuple([import_zod2.z.number(), import_zod2.z.number()])),
   confidence_weights: import_zod2.z.record(import_zod2.z.number())
 });
 function loadLimits(limitsPath) {
@@ -372,7 +372,6 @@ function computeWeekly({
       guardedFood = guardResult.food;
       plausibilityFlags = guardResult.flags;
     }
-    const enhancedFood = foodItem;
     for (const nutrient of Object.keys(schema.nutrients)) {
       const nutrientInfo = schema.nutrients[nutrient];
       const fieldName = `${nutrient}_${nutrientInfo.unit}`;
@@ -409,7 +408,7 @@ function computeWeekly({
       percent_target: percentTarget,
       gap_surplus: gapSurplus
     };
-    provenance[nutrient] = nutrientProvenance;
+    provenance[nutrient] = nutrientProvenance.source;
     confidence[nutrient] = nutrientConfidence;
   }
   const deficientNutrients = [];
@@ -436,13 +435,6 @@ function computeWeekly({
     }
   }
   const allFlags = [];
-  if ("provenance" in foodDB) {
-    Object.values(foodDB).forEach((food) => {
-      Object.values(food.provenance).forEach((prov) => {
-        allFlags.push(...prov.flags);
-      });
-    });
-  }
   const totalGapSurplus = Object.values(nutrients).reduce((sum, { gap_surplus }) => sum + Math.abs(gap_surplus), 0);
   return {
     stage,

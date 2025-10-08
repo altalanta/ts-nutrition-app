@@ -72,13 +72,11 @@ export interface Limits {
   confidence_weights: Record<string, number>;
 }
 
-export interface ULReport {
-  [nutrient: NutrientKey]: {
-    total: number;
-    ul: number | null;
-    overBy: number | null;
-    severity: 'none' | 'warning' | 'exceeded';
-  };
+export interface ULAlert {
+  total: number;
+  ul: number | null;
+  overBy: number | null;
+  severity: 'none' | 'warn' | 'error';
 }
 
 export interface NutrientProvenance {
@@ -92,8 +90,8 @@ export interface ReportJSON {
   week_start: string;
   week_end: string;
   nutrients: WeeklyReport;
-  provenance: Record<NutrientKey, 'FDC'|'NUTRITIONIX'|'OFF'|'derived'|'none'>;
+  provenance: Record<NutrientKey, NutrientProvenance>;
   confidence: Record<NutrientKey, number>; // 0..1
-  ulAlerts: Record<NutrientKey, { total: number; UL: number|null; overBy: number; severity: 'none'|'warn'|'error' }>;
+  ulAlerts: Record<NutrientKey, ULAlert>;
   flags: string[]; // aggregated plausibility/merge flags
 }

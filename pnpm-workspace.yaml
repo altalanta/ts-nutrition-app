@@ -1,5 +1,6 @@
 packages:
   - 'packages/*'
   - 'apps/*'
+  - 'packages/nutri-importers'
   - 'packages/nutri-report-pdf'
   - 'packages/nutri-share'
