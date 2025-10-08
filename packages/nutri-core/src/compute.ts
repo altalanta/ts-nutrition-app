@@ -1,8 +1,7 @@
 import dayjs from 'dayjs';
-import { NutrientKey, LifeStage, FoodDB, Goals, Schema, ReportJSON, FoodLogEntry, Limits, ULReport, NutrientProvenance } from './types';
+import { NutrientKey, LifeStage, FoodDB, Goals, Schema, ReportJSON, FoodLogEntry, Limits, ULAlert, NutrientProvenance } from './types';
 import { convertToBaseUnit } from './units';
 import { applyPlausibilityGuards, evaluateULs, calculateConfidence, createProvenance } from './limits';
-import { MergedFoodWithProvenance } from 'nutri-importers';
 
 // Compute weekly nutrition report
 export function computeWeekly({
@@ -15,7 +14,7 @@ export function computeWeekly({
 }: {
   logPath: string;
   stage: LifeStage;
-  foodDB: FoodDB | Record<string, MergedFoodWithProvenance>;
+  foodDB: FoodDB;
   goals: Goals;
   schema: Schema;
   limits?: Limits;
@@ -31,7 +30,7 @@ export function computeWeekly({
   });
 
   if (parsed.errors.length > 0) {
-    throw new Error(`CSV parsing errors: ${parsed.errors.map(e => e.message).join(', ')}`);
+    throw new Error(`CSV parsing errors: ${parsed.errors.map((e: any) => e.message).join(', ')}`);
   }
 
   const logEntries: FoodLogEntry[] = parsed.data.map((row: any) => ({
@@ -74,9 +73,6 @@ export function computeWeekly({
       guardedFood = guardResult.food;
       plausibilityFlags = guardResult.flags;
     }
-
-    // Check if this is an enhanced food with provenance (from importers)
-    const enhancedFood = foodItem as MergedFoodWithProvenance;
 
     // Calculate nutrient intake for each nutrient
     for (const nutrient of Object.keys(schema.nutrients) as NutrientKey[]) {
@@ -136,7 +132,7 @@ export function computeWeekly({
       gap_surplus: gapSurplus,
     };
 
-    provenance[nutrient] = nutrientProvenance;
+    provenance[nutrient] = nutrientProvenance.source;
     confidence[nutrient] = nutrientConfidence;
   }
 
@@ -156,7 +152,7 @@ export function computeWeekly({
   }
 
   // Calculate UL alerts if limits are provided
-  let ulAlerts: Record<NutrientKey, { total: number; ul: number|null; overBy: number; severity: 'none'|'warn'|'error' }> = {} as any;
+  let ulAlerts: Record<NutrientKey, { total: number; ul: number|null; overBy: number | null; severity: 'none' | 'warn' | 'error' }> = {} as any;
   if (limits) {
     ulAlerts = evaluateULs({ nutrients }, stage, limits);
 
@@ -172,14 +168,6 @@ export function computeWeekly({
 
   // Aggregate provenance flags from all foods
   const allFlags: string[] = [];
-  if ('provenance' in foodDB) {
-    // Enhanced food database with provenance
-    Object.values(foodDB as Record<string, MergedFoodWithProvenance>).forEach(food => {
-      Object.values(food.provenance).forEach(prov => {
-        allFlags.push(...prov.flags);
-      });
-    });
-  }
 
   const totalGapSurplus = Object.values(nutrients)
     .reduce((sum, { gap_surplus }) => sum + Math.abs(gap_surplus), 0);
