@@ -106,3 +106,4 @@ describe('Memory Storage Adapter', () => {
     expect(await storage.get('key2')).toBeNull()
   })
 })
+

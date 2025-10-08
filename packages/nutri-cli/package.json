@@ -14,7 +14,10 @@
   "dependencies": {
     "commander": "^11.0.0",
     "chalk": "^5.0.0",
-    "nutri-core": "workspace:*"
+    "nutri-core": "workspace:*",
+    "nutri-importers": "workspace:*",
+    "nutri-report-pdf": "workspace:*",
+    "nutri-share": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
@@ -26,5 +29,6 @@
   "author": "Nutrition Engine Team",
   "license": "MIT"
 }
+
 
 

@@ -140,3 +140,4 @@ export class MemoryStorageAdapter implements StorageAdapter {
     this.meta.clear();
   }
 }
+

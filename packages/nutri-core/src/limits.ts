@@ -1,12 +1,25 @@
 import { z } from 'zod';
-import { NutrientKey, Limits, FoodItem, ULReport, NutrientProvenance, LifeStage } from './types';
+import { NutrientKey, Limits, FoodItem, ULAlert, NutrientProvenance, LifeStage, makeRecord, NUTRIENT_KEYS } from './types';
 
-// Schema validation for limits.yml (after processing)
-export const LimitsSchema = z.object({
+// Schema validation for limits.yml (before processing)
+const rangeStr = z.string().regex(/^\d+(\.\d+)?\.\.\d+(\.\d+)?$/);
+const rangeToTuple = (s: string): [number, number] => {
+  const [lo, hi] = s.split('..').map(Number);
+  return [lo, hi];
+};
+
+export const limitsSchema = z.object({
   units_base: z.record(z.string()),
-  UL: z.record(z.record(z.number().nullable())),
-  plausibility_per_100g: z.record(z.tuple([z.number(), z.number()])),
-  confidence_weights: z.record(z.number()),
+  UL: z.object({
+    pregnancy: z.record(z.number().nullable()),
+    lactation: z.record(z.number().nullable())
+  }),
+  plausibility_per_100g: z.record(rangeStr.transform(rangeToTuple)),
+  confidence_weights: z.object({
+    FDC: z.number(),
+    NUTRITIONIX: z.number(),
+    OFF: z.number()
+  })
 });
 
 // Load and validate limits from YAML
@@ -17,19 +30,20 @@ export function loadLimits(limitsPath: string): Limits {
   const yamlContent = fs.readFileSync(limitsPath, 'utf8');
   const parsed = yaml.parse(yamlContent);
 
-  // Convert string ranges to tuples
-  const processed = {
-    ...parsed,
-    plausibility_per_100g: Object.fromEntries(
-      Object.entries(parsed.plausibility_per_100g as Record<string, string>).map(([key, value]: [string, string]) => {
-        const match = value.match(/^(\d+)\.\.(\d+)$/);
-        if (!match) throw new Error(`Invalid plausibility range format: ${value}`);
-        return [key, [parseInt(match[1]), parseInt(match[2])] as [number, number]];
-      })
-    )
-  };
+  const validated = limitsSchema.parse(parsed);
 
-  return LimitsSchema.parse(processed);
+  // Now coerce plausibility to Record<NutrientKey, [number, number]>
+  const plausibility = makeRecord<[number, number]>(k => validated.plausibility_per_100g[k] ?? [0, Infinity]);
+
+  return {
+    units_base: validated.units_base,
+    UL: {
+      pregnancy: makeRecord<number | null>(k => validated.UL.pregnancy[k] ?? null),
+      lactation: makeRecord<number | null>(k => validated.UL.lactation[k] ?? null)
+    },
+    plausibility_per_100g: plausibility,
+    confidence_weights: validated.confidence_weights
+  };
 }
 
 /**
@@ -72,10 +86,15 @@ export function evaluateULs(
   report: { nutrients: Record<NutrientKey, { weekly_total: number }> },
   stage: LifeStage,
   limits: Limits
-): ULReport {
-  const ulReport: ULReport = {} as ULReport;
+): Record<NutrientKey, ULAlert> {
+  const ulReport = makeRecord<ULAlert>(k => ({
+    total: 0,
+    ul: null,
+    overBy: null,
+    severity: 'none'
+  }));
 
-  for (const nutrient of Object.keys(limits.UL[stage] || {}) as NutrientKey[]) {
+  for (const nutrient of NUTRIENT_KEYS) {
     const ul = limits.UL[stage]?.[nutrient];
     const total = report.nutrients[nutrient]?.weekly_total || 0;
 
