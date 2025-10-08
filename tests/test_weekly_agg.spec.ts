@@ -107,3 +107,4 @@ describe('Weekly Aggregation', () => {
     expect(report.nutrients.Iron.gap_surplus).toBeCloseTo(-17.1, 1);
   });
 });
+

@@ -91,17 +91,24 @@ pnpm --filter nutri-cli exec nutri report \
   --goals data/goals.yml \
   --schema data/schema.yml \
   --foods data/sample_foods.csv \
+  --limits data/limits.yml \
   --out report.json
 
 # Search for foods by name
 pnpm --filter nutri-cli exec nutri find --query "salmon"
 
-# Scan barcode and generate report
+# Scan barcode and generate report (with safety features)
 pnpm --filter nutri-cli exec nutri scan \
   --barcode 041196910184 \
   --stage pregnancy_trimester2 \
+  --limits data/limits.yml \
   --out report.json
 ```
+
+The CLI now includes:
+- **UL Badges**: ✓ (good), ! (near UL), ✕ (exceeded UL)
+- **Provenance Display**: Source and confidence scores for each nutrient
+- **Safety Warnings**: Flags for implausible values and data conflicts
 
 ### Web Usage
 
@@ -113,25 +120,39 @@ pnpm run dev:web
 ```
 
 The web app provides:
-- **Search Tab**: Search for foods by name and add to your daily log
-- **Barcode Tab**: Enter barcode numbers to look up products
-- **Log Tab**: View your daily food entries and generate weekly reports
+- **Onboarding**: Select your life stage (preconception, pregnancy trimesters, lactation)
+- **Search Tab**: Search for foods by name with provenance and confidence indicators
+- **Barcode Tab**: Enter barcode numbers for product lookup with safety validation
+- **Log Tab**: Daily food logging with weekly reports showing UL compliance and data quality
+- **Settings**: Life stage management, export options, and privacy controls
 
-## Data Importers
+## Data Importers & Safety Model
 
-The system includes HTTP clients for three major nutrition data sources:
+The system includes HTTP clients for three major nutrition data sources with a sophisticated safety-aware merging strategy:
 
-- **USDA FoodData Central (FDC)**: Government database with comprehensive nutrient data
+- **USDA FoodData Central (FDC)**: Government database with comprehensive, verified nutrient data
 - **Nutritionix**: Commercial database with strong barcode and branded product coverage
 - **Open Food Facts (OFF)**: Open-source database with global barcode coverage
 
-### Data Merging Strategy
+### Safety-First Data Merging Strategy
 
-When multiple sources provide data for the same product:
+When multiple sources provide data for the same product, the system applies a deterministic safety policy:
 
-1. **Primary Source Priority**: FDC > Nutritionix > OFF
-2. **Nutrient Selection**: For each nutrient, choose the maximum non-zero value across all sources
-3. **Metadata Enhancement**: Use the best available brand, serving size, and barcode information
+1. **FDC Priority for Micronutrients**: For safety-critical micronutrients (Vitamin A, Selenium, Iodine, Folate), FDC data is preferred when available
+2. **Confidence-Weighted Selection**: For other nutrients, the highest-confidence source is selected
+3. **Conflict Detection**: Values differing by >3× trigger conflict flags for review
+4. **Plausibility Guards**: Implausible per-100g values are clamped to reasonable bounds
+5. **Provenance Tracking**: Each nutrient value includes source, confidence score, and quality flags
+
+### Safety Model
+
+**Upper Limits (ULs)**: The system warns at 80% of established ULs and errors at 100%+ for pregnancy/lactation stages.
+
+**Plausibility Bounds**: Nutrient values exceeding realistic per-100g thresholds are clamped and flagged.
+
+**Confidence Scoring**: Each nutrient value is scored based on source reliability (FDC=1.0, Nutritionix=0.8, OFF=0.6) × data completeness.
+
+**Provenance Chips**: All nutrient data includes source attribution and confidence indicators.
 
 ### Environment Setup
 
