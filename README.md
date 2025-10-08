@@ -103,12 +103,23 @@ pnpm --filter nutri-cli exec nutri scan \
   --stage pregnancy_trimester2 \
   --limits data/limits.yml \
   --out report.json
+
+# Export PDF report for clinicians
+pnpm --filter nutri-cli exec nutri export-pdf \
+  --stage pregnancy_trimester2 \
+  --log data/log_example.csv \
+  --goals data/goals.yml \
+  --schema data/schema.yml \
+  --limits data/limits.yml \
+  --week-start 2025-10-01 \
+  --out report.pdf
 ```
 
 The CLI now includes:
-- **UL Badges**: ✓ (good), ! (near UL), ✕ (exceeded UL)
+- **UL Badges**: ✓ (good), ! (near UL ≥80%), ✕ (exceeded UL >100%)
 - **Provenance Display**: Source and confidence scores for each nutrient
 - **Safety Warnings**: Flags for implausible values and data conflicts
+- **PDF Export**: Clinician-ready reports with citations and provenance
 
 ### Web Usage
 
@@ -124,6 +135,7 @@ The web app provides:
 - **Search Tab**: Search for foods by name with provenance and confidence indicators
 - **Barcode Tab**: Enter barcode numbers for product lookup with safety validation
 - **Log Tab**: Daily food logging with weekly reports showing UL compliance and data quality
+- **PDF Export**: Generate clinician-ready PDF reports with full provenance and citations
 - **Settings**: Life stage management, export options, and privacy controls
 
 ## Data Importers & Safety Model
@@ -144,15 +156,57 @@ When multiple sources provide data for the same product, the system applies a de
 4. **Plausibility Guards**: Implausible per-100g values are clamped to reasonable bounds
 5. **Provenance Tracking**: Each nutrient value includes source, confidence score, and quality flags
 
-### Safety Model
+**Data Source Hierarchy:**
+- **FDC (1.0)**: Government-verified, highest confidence
+- **Nutritionix (0.8)**: Commercial database with verified ingredients
+- **OFF (0.6)**: User-contributed data, variable quality
 
-**Upper Limits (ULs)**: The system warns at 80% of established ULs and errors at 100%+ for pregnancy/lactation stages.
+**Safety Features:**
+- **UL Compliance**: Warns at 80% of established ULs, errors at 100%+
+- **Plausibility Checks**: Clamps impossible values (e.g., selenium >2000µg/100g)
+- **Quality Flags**: Surfaces data conflicts and implausible values
+- **Clinical Citations**: All values include authoritative source references
 
-**Plausibility Bounds**: Nutrient values exceeding realistic per-100g thresholds are clamped and flagged.
 
-**Confidence Scoring**: Each nutrient value is scored based on source reliability (FDC=1.0, Nutritionix=0.8, OFF=0.6) × data completeness.
+### PDF Report Export
 
-**Provenance Chips**: All nutrient data includes source attribution and confidence indicators.
+Both CLI and web app support exporting clinician-ready PDF reports with:
+
+- **Weekly nutrient summaries** with goals and % target achievement
+- **UL compliance indicators** with clear warnings for safety concerns
+- **Data provenance tracking** showing source and confidence for each nutrient
+- **Quality flags** highlighting implausible values or data conflicts
+- **Full citations** from authoritative sources (IOM, WHO, etc.)
+- **Privacy protection** - no personal identifiers included
+
+### Safety Model & Citations
+
+**Data Provenance & Confidence Scoring:**
+- **FDC (USDA FoodData Central)**: Government-verified data, highest confidence (1.0)
+- **Nutritionix**: Commercial database with verified ingredients (0.8 confidence)
+- **Open Food Facts**: User-contributed data, variable quality (0.6 confidence)
+
+**Upper Limits (ULs):** Based on IOM DRI reports with citations:
+- Vitamin A: 3000 µg RAE/day (IOM 2001)
+- Iodine: 1100 µg/day (IOM 2001, WHO 2007)
+- Selenium: 400 µg/day (IOM 2000)
+- Zinc: 40 mg/day (IOM 2001)
+- Iron: 45 mg/day (IOM 2001)
+
+**Plausibility Guards:** Values exceeding realistic per-100g thresholds are clamped:
+- Selenium: 2000 µg/100g max (Brazil nuts)
+- Iodine: 5000 µg/100g max (seaweed)
+- Vitamin A: 5000 µg/100g max (liver)
+
+**Merge Policy:**
+1. For micronutrients (Vitamin A, Selenium, Iodine, Folate): Prefer FDC when available
+2. For other nutrients: Choose highest confidence source
+3. Flag conflicts when values differ by >3× between high-confidence sources
+
+**Clinical Citations:** All goals and ULs include full citations from:
+- Institute of Medicine (IOM) Dietary Reference Intakes
+- World Health Organization (WHO) guidelines
+- American College of Obstetricians and Gynecologists (ACOG)
 
 ### Environment Setup
 

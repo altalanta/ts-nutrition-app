@@ -1,7 +1,7 @@
 {
-  "name": "nutri-core",
+  "name": "nutri-report-pdf",
   "version": "1.0.0",
-  "description": "Pure TypeScript nutrition engine for tracking nutrient intake",
+  "description": "PDF report generator for clinician-facing nutrition summaries",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -11,19 +11,19 @@
     "format": "prettier --write src/**/*.ts"
   },
   "dependencies": {
-    "zod": "^3.22.0",
-    "papaparse": "^5.4.0",
-    "yaml": "^2.3.0",
-    "dayjs": "^1.11.0"
+    "@react-pdf/renderer": "^3.1.0",
+    "nutri-core": "workspace:*"
   },
   "devDependencies": {
-    "@types/papaparse": "^5.3.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "react": "^18.0.0",
     "tsup": "^7.0.0",
     "vitest": "^0.34.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "pdf-parse": "^1.1.1"
   },
-  "keywords": ["nutrition", "nutrients", "typescript"],
+  "keywords": ["nutrition", "pdf", "report", "clinician"],
   "author": "Nutrition Engine Team",
   "license": "MIT"
 }
-

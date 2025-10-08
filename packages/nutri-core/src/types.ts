@@ -8,7 +8,7 @@ export type NutrientKey =
   | 'Choline'
   | 'Folate_DFE';
 
-export type LifeStage = 'pregnancy_trimester2';
+export type LifeStage = 'pregnancy_trimester2' | 'pregnancy_trimester1' | 'pregnancy_trimester3' | 'lactation' | 'preconception' | 'interpregnancy';
 
 export interface NutrientInfo {
   unit: 'mg' | 'µg';
@@ -65,14 +65,35 @@ export interface WeeklyReport {
   };
 }
 
+export interface Limits {
+  units_base: Record<string, string>;
+  UL: Record<string, Record<NutrientKey, number | null>>;
+  plausibility_per_100g: Record<NutrientKey, [number, number]>;
+  confidence_weights: Record<string, number>;
+}
+
+export interface ULReport {
+  [nutrient: NutrientKey]: {
+    total: number;
+    ul: number | null;
+    overBy: number | null;
+    severity: 'none' | 'warning' | 'exceeded';
+  };
+}
+
+export interface NutrientProvenance {
+  source: 'FDC' | 'NUTRITIONIX' | 'OFF' | 'derived' | 'none';
+  confidence: number; // 0-1
+  flags: string[]; // e.g., ['plausibility_clamped', 'conflict_detected']
+}
+
 export interface ReportJSON {
   stage: LifeStage;
   week_start: string;
   week_end: string;
   nutrients: WeeklyReport;
-  summary: {
-    deficient_nutrients: NutrientKey[];
-    surplus_nutrients: NutrientKey[];
-    total_gap_surplus: number;
-  };
+  provenance: Record<NutrientKey, 'FDC'|'NUTRITIONIX'|'OFF'|'derived'|'none'>;
+  confidence: Record<NutrientKey, number>; // 0..1
+  ulAlerts: Record<NutrientKey, { total: number; UL: number|null; overBy: number; severity: 'none'|'warn'|'error' }>;
+  flags: string[]; // aggregated plausibility/merge flags
 }
