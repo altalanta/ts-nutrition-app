@@ -141,3 +141,4 @@ export class OpenFoodFactsImporter {
 // Singleton instance
 export const offImporter = new OpenFoodFactsImporter();
 
+

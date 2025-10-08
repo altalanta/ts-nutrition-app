@@ -175,3 +175,4 @@ describe('PDF Contents', () => {
     expect(parsed.text).toContain('✓')  // Good badge
   })
 })
+

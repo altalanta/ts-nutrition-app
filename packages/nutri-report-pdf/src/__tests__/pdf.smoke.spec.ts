@@ -75,3 +75,4 @@ describe('PDF Smoke Tests', () => {
     expect(version.length).toBeGreaterThan(0)
   })
 })
+
