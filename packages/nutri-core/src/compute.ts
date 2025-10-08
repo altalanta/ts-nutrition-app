@@ -1,6 +1,8 @@
 import dayjs from 'dayjs';
-import { NutrientKey, LifeStage, FoodDB, Goals, Schema, ReportJSON, FoodLogEntry } from './types';
+import { NutrientKey, LifeStage, FoodDB, Goals, Schema, ReportJSON, FoodLogEntry, Limits, ULReport, NutrientProvenance } from './types';
 import { convertToBaseUnit } from './units';
+import { applyPlausibilityGuards, evaluateULs, calculateConfidence, createProvenance } from './limits';
+import { MergedFoodWithProvenance } from 'nutri-importers';
 
 // Compute weekly nutrition report
 export function computeWeekly({
@@ -9,12 +11,14 @@ export function computeWeekly({
   foodDB,
   goals,
   schema,
+  limits,
 }: {
   logPath: string;
   stage: LifeStage;
-  foodDB: FoodDB;
+  foodDB: FoodDB | Record<string, MergedFoodWithProvenance>;
   goals: Goals;
   schema: Schema;
+  limits?: Limits;
 }): ReportJSON {
   // Load and validate food log
   const fs = require('fs');
@@ -62,14 +66,26 @@ export function computeWeekly({
 
     const servings = entry.servings;
 
+    // Apply plausibility guards if limits are provided
+    let guardedFood = foodItem;
+    let plausibilityFlags: string[] = [];
+    if (limits) {
+      const guardResult = applyPlausibilityGuards(foodItem, limits);
+      guardedFood = guardResult.food;
+      plausibilityFlags = guardResult.flags;
+    }
+
+    // Check if this is an enhanced food with provenance (from importers)
+    const enhancedFood = foodItem as MergedFoodWithProvenance;
+
     // Calculate nutrient intake for each nutrient
     for (const nutrient of Object.keys(schema.nutrients) as NutrientKey[]) {
       const nutrientInfo = schema.nutrients[nutrient];
-      const fieldName = `${nutrient}_${nutrientInfo.unit}` as keyof typeof foodItem;
+      const fieldName = `${nutrient}_${nutrientInfo.unit}` as keyof typeof guardedFood;
 
       // Convert serving size to actual intake based on servings
       const servingMultiplier = servings;
-      const nutrientValue = (foodItem[fieldName] as number) * servingMultiplier;
+      const nutrientValue = (guardedFood[fieldName] as number) * servingMultiplier;
 
       // Convert to base unit (mg) for consistent calculations
       const baseUnitValue = convertToBaseUnit(nutrientValue, nutrientInfo.unit);
@@ -93,8 +109,10 @@ export function computeWeekly({
     throw new Error(`Goals not found for life stage '${stage}'`);
   }
 
-  // Calculate report
+  // Calculate report with provenance and confidence
   const nutrients: ReportJSON['nutrients'] = {} as ReportJSON['nutrients'];
+  const provenance: Record<NutrientKey, NutrientProvenance> = {} as Record<NutrientKey, NutrientProvenance>;
+  const confidence: Record<NutrientKey, number> = {} as Record<NutrientKey, number>;
 
   for (const nutrient of Object.keys(schema.nutrients) as NutrientKey[]) {
     const nutrientInfo = schema.nutrients[nutrient];
@@ -105,17 +123,28 @@ export function computeWeekly({
     const percentTarget = Math.min(Math.round((weeklyTotal / weeklyGoal) * 100), 999);
     const gapSurplus = weeklyTotal - weeklyGoal;
 
+    // Calculate provenance and confidence from food sources
+    // For now, use a simplified approach - in a real implementation,
+    // this would aggregate provenance from all foods that contributed to this nutrient
+    const nutrientConfidence = calculateConfidence('derived', weeklyTotal, limits || { confidence_weights: {} } as Limits);
+    const nutrientProvenance = createProvenance('derived', nutrientConfidence);
+
     nutrients[nutrient] = {
       weekly_total: weeklyTotal,
       weekly_goal: weeklyGoal,
       percent_target: percentTarget,
       gap_surplus: gapSurplus,
     };
+
+    provenance[nutrient] = nutrientProvenance;
+    confidence[nutrient] = nutrientConfidence;
   }
 
   // Calculate summary
   const deficientNutrients: NutrientKey[] = [];
   const surplusNutrients: NutrientKey[] = [];
+  const ulWarnings: NutrientKey[] = [];
+  const ulExceeded: NutrientKey[] = [];
 
   for (const nutrient of Object.keys(nutrients) as NutrientKey[]) {
     const { gap_surplus } = nutrients[nutrient];
@@ -126,6 +155,32 @@ export function computeWeekly({
     }
   }
 
+  // Calculate UL alerts if limits are provided
+  let ulAlerts: Record<NutrientKey, { total: number; ul: number|null; overBy: number; severity: 'none'|'warn'|'error' }> = {} as any;
+  if (limits) {
+    ulAlerts = evaluateULs({ nutrients }, stage, limits);
+
+    // Extract warnings and exceeded nutrients
+    for (const [nutrient, alert] of Object.entries(ulAlerts)) {
+      if (alert.severity === 'warn') {
+        ulWarnings.push(nutrient as NutrientKey);
+      } else if (alert.severity === 'error') {
+        ulExceeded.push(nutrient as NutrientKey);
+      }
+    }
+  }
+
+  // Aggregate provenance flags from all foods
+  const allFlags: string[] = [];
+  if ('provenance' in foodDB) {
+    // Enhanced food database with provenance
+    Object.values(foodDB as Record<string, MergedFoodWithProvenance>).forEach(food => {
+      Object.values(food.provenance).forEach(prov => {
+        allFlags.push(...prov.flags);
+      });
+    });
+  }
+
   const totalGapSurplus = Object.values(nutrients)
     .reduce((sum, { gap_surplus }) => sum + Math.abs(gap_surplus), 0);
 
@@ -134,11 +189,10 @@ export function computeWeekly({
     week_start: weekStart,
     week_end: weekEnd,
     nutrients,
-    summary: {
-      deficient_nutrients: deficientNutrients,
-      surplus_nutrients: surplusNutrients,
-      total_gap_surplus: totalGapSurplus,
-    },
+    provenance,
+    confidence,
+    ulAlerts,
+    flags: [...new Set(allFlags)], // Unique flags from all foods
   };
 }
 
@@ -147,4 +201,74 @@ export function getDeficientNutrients(report: ReportJSON, threshold = 0.9): Nutr
   return Object.entries(report.nutrients)
     .filter(([_, data]) => data.percent_target < threshold * 100)
     .map(([nutrient, _]) => nutrient as NutrientKey);
+}
+
+/**
+ * Compute a nutrition report from a barcode lookup
+ * This is a convenience function that combines importer lookup with core computation
+ */
+export async function computeFromBarcode({
+  barcode,
+  stage,
+  goals,
+  schema,
+  importers,
+}: {
+  barcode: string;
+  stage: LifeStage;
+  goals: Goals;
+  schema: Schema;
+  importers: {
+    lookupByBarcode: (barcode: string) => Promise<any>;
+  };
+}): Promise<ReportJSON> {
+  // Look up the food by barcode
+  const normalizedFood = await importers.lookupByBarcode(barcode);
+
+  if (!normalizedFood) {
+    throw new Error(`Food not found for barcode: ${barcode}`);
+  }
+
+  // Convert to FoodItem format
+  const { normalizeFromImporter } = await import('./normalize');
+  const foodItem = normalizeFromImporter(normalizedFood, schema);
+
+  // Create a temporary food database with just this item
+  const foodDB = {
+    [foodItem.food_name]: foodItem,
+  };
+
+  // Create a temporary log with 1 serving today
+  const today = new Date().toISOString().split('T')[0];
+  const logEntries = [{
+    date: today,
+    food_name: foodItem.food_name,
+    servings: 1,
+  }];
+
+  // Create a temporary CSV content for the log
+  const logCsv = 'date,food_name,servings\n' + logEntries.map(entry =>
+    `${entry.date},${entry.food_name},${entry.servings}`
+  ).join('\n');
+
+  // Write to a temporary file
+  const fs = require('fs');
+  const tmpLogPath = `/tmp/barcode_log_${Date.now()}.csv`;
+  fs.writeFileSync(tmpLogPath, logCsv);
+
+  try {
+    // Use the existing computeWeekly function
+    return computeWeekly({
+      logPath: tmpLogPath,
+      stage,
+      foodDB,
+      goals,
+      schema,
+    });
+  } finally {
+    // Clean up temporary file
+    if (fs.existsSync(tmpLogPath)) {
+      fs.unlinkSync(tmpLogPath);
+    }
+  }
 }

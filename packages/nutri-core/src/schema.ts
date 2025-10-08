@@ -134,3 +134,4 @@ export function loadFoodLog(csvPath: string): FoodLogEntry[] {
     servings: Number(row.servings),
   }));
 }
+
