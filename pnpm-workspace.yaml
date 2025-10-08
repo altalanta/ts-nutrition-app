@@ -2,3 +2,4 @@ packages:
   - 'packages/*'
   - 'apps/*'
   - 'packages/nutri-report-pdf'
+  - 'packages/nutri-share'

@@ -28,3 +28,4 @@ export interface ULBadge {
   symbol: '✓' | '!' | '✕';
   color: 'green' | 'yellow' | 'red';
 }
+

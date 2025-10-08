@@ -25,6 +25,9 @@ import {
   buildCitationsMap,
   getAppVersion
 } from 'nutri-report-pdf';
+import {
+  createFilesystemShareService
+} from 'nutri-share';
 
 const program = new Command();
 
@@ -324,6 +327,108 @@ program
 
     } catch (error) {
       console.error(chalk.red('❌ Error exporting PDF:'), error instanceof Error ? error.message : error);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('share')
+  .description('Create a secure share link for a nutrition report')
+  .requiredOption('--stage <stage>', 'Life stage (e.g., pregnancy_trimester2)')
+  .requiredOption('--log <logPath>', 'Path to food log CSV')
+  .requiredOption('--goals <goalsPath>', 'Path to goals YAML')
+  .requiredOption('--schema <schemaPath>', 'Path to schema YAML')
+  .requiredOption('--limits <limitsPath>', 'Path to limits YAML')
+  .requiredOption('--week-start <weekStartISO>', 'Week start date in ISO format (YYYY-MM-DD)')
+  .option('--secret <secret>', 'HMAC secret (default: SHARE_SECRET env var)')
+  .option('--output <outputPath>', 'Also write PDF to local file')
+  .action(async (options) => {
+    try {
+      console.log(chalk.blue('🔗 Creating secure share link...'));
+
+      // Validate file paths
+      const requiredFiles = [
+        { path: options.log, name: 'log' },
+        { path: options.goals, name: 'goals' },
+        { path: options.schema, name: 'schema' },
+        { path: options.limits, name: 'limits' },
+      ];
+
+      for (const file of requiredFiles) {
+        if (!fs.existsSync(file.path)) {
+          console.error(chalk.red(`❌ File not found: ${file.name} (${file.path})`));
+          process.exit(1);
+        }
+      }
+
+      // Load data
+      const schema = loadSchema(options.schema);
+      const goals = loadGoals(options.goals);
+      const limits = loadLimits(options.limits);
+
+      // Validate stage
+      if (!goals[options.stage as LifeStage]) {
+        console.error(chalk.red(`❌ Invalid stage: ${options.stage}`));
+        console.log(chalk.yellow('Available stages:'), Object.keys(goals).join(', '));
+        process.exit(1);
+      }
+
+      // Create food database (simplified for sharing)
+      const foodDB: any = {}
+
+      // For sharing, we don't need full food data since we're just generating the report
+      // The report will be computed with minimal food data
+
+      // Compute report
+      const report = computeWeekly({
+        logPath: options.log,
+        stage: options.stage as LifeStage,
+        foodDB,
+        goals,
+        schema,
+        limits,
+      });
+
+      // Build citations map
+      const citations = buildCitationsMap(goals, limits);
+      const appVersion = getAppVersion();
+
+      // Generate PDF
+      const pdfBuffer = await renderReportPdf(report, {
+        stage: options.stage as LifeStage,
+        goals,
+        limits,
+        weekStartISO: options.weekStart,
+        sources: citations,
+        appVersion,
+      });
+
+      // Create share service
+      const secret = options.secret || process.env.SHARE_SECRET || 'development-secret';
+      const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+      const shareService = createFilesystemShareService(secret, `${baseUrl}/share`);
+
+      // Create share link
+      const shareResult = await shareService.createLink({
+        pdfBytes: pdfBuffer,
+        stage: options.stage as LifeStage,
+        weekStartISO: options.weekStart,
+        reportMeta: { version: appVersion },
+      });
+
+      // Output results
+      console.log(chalk.green(`✅ Share link created: ${shareResult.url}`));
+      console.log(chalk.gray(`   ID: ${shareResult.id}`));
+      console.log(chalk.gray(`   Expires: ${shareResult.expiresAtISO}`));
+
+      // Optional: write PDF to local file
+      if (options.output) {
+        fs.writeFileSync(options.output, pdfBuffer);
+        console.log(chalk.green(`✅ PDF also saved to: ${options.output}`));
+      }
+
+    } catch (error) {
+      console.error(chalk.red('❌ Error creating share link:'), error instanceof Error ? error.message : error);
       process.exit(1);
     }
   });

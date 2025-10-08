@@ -54,3 +54,4 @@ export function foodItemToNormalized(foodItem: FoodItem, schema: Schema): Normal
   };
 }
 
+
