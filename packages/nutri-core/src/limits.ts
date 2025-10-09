@@ -18,7 +18,9 @@ export const limitsSchema = z.object({
   confidence_weights: z.object({
     FDC: z.number(),
     NUTRITIONIX: z.number(),
-    OFF: z.number()
+    OFF: z.number(),
+    derived: z.number(),
+    none: z.number()
   })
 });
 
