@@ -8,7 +8,10 @@
     "test": "pnpm -r run test -- --run",
     "lint": "pnpm -r run lint",
     "format": "pnpm -r run format",
+    "typecheck": "pnpm -r run typecheck",
     "dev:web": "pnpm --filter nutri-web dev",
+    "build:web": "pnpm --filter nutri-web build",
+    "start:web": "pnpm --filter nutri-web start",
     "clean": "rimraf **/dist .turbo .cache .share"
   },
   "devDependencies": {

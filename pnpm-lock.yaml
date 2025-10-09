@@ -71,6 +71,15 @@ importers:
       nutri-core:
         specifier: workspace:*
         version: link:../nutri-core
+      nutri-importers:
+        specifier: workspace:*
+        version: link:../nutri-importers
+      nutri-report-pdf:
+        specifier: workspace:*
+        version: link:../nutri-report-pdf
+      nutri-share:
+        specifier: workspace:*
+        version: link:../nutri-share
     devDependencies:
       '@types/node':
         specifier: ^20.0.0
