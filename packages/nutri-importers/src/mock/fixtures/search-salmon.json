@@ -1,0 +1,41 @@
+[
+  {
+    "source": "FDC",
+    "source_id": "173687",
+    "food_name": "Salmon, Atlantic, farmed, cooked, dry heat",
+    "brand": "Generic",
+    "serving_name": "100g",
+    "serving_size_g": 100,
+    "barcode": null,
+    "nutrients": {
+      "DHA": 0.8,
+      "Selenium": 36.5,
+      "Vitamin_A_RAE": 25,
+      "Zinc": 0.64,
+      "Iron": 0.34,
+      "Iodine": 0,
+      "Choline": 90.4,
+      "Folate_DFE": 25
+    }
+  },
+  {
+    "source": "NUTRITIONIX",
+    "source_id": "nx_12345",
+    "food_name": "Wild-Caught Salmon Fillet",
+    "brand": "Fresh Market",
+    "serving_name": "100g",
+    "serving_size_g": 100,
+    "barcode": "041196910184",
+    "nutrients": {
+      "DHA": 1.2,
+      "Selenium": 38.2,
+      "Vitamin_A_RAE": 28,
+      "Zinc": 0.58,
+      "Iron": 0.32,
+      "Iodine": 0,
+      "Choline": 88.9,
+      "Folate_DFE": 22
+    }
+  }
+]
+

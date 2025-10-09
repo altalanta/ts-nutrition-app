@@ -1,0 +1,41 @@
+[
+  {
+    "source": "FDC",
+    "source_id": "171265",
+    "food_name": "Yogurt, Greek, plain, nonfat",
+    "brand": "Generic",
+    "serving_name": "100g",
+    "serving_size_g": 100,
+    "barcode": null,
+    "nutrients": {
+      "DHA": 0,
+      "Selenium": 9.7,
+      "Vitamin_A_RAE": 0,
+      "Zinc": 0.52,
+      "Iron": 0.07,
+      "Iodine": 0,
+      "Choline": 15.1,
+      "Folate_DFE": 11
+    }
+  },
+  {
+    "source": "NUTRITIONIX",
+    "source_id": "nx_67890",
+    "food_name": "Greek Yogurt, Plain",
+    "brand": "Chobani",
+    "serving_name": "170g",
+    "serving_size_g": 170,
+    "barcode": "818290010713",
+    "nutrients": {
+      "DHA": 0,
+      "Selenium": 8.9,
+      "Vitamin_A_RAE": 0,
+      "Zinc": 0.48,
+      "Iron": 0.06,
+      "Iodine": 0,
+      "Choline": 14.5,
+      "Folate_DFE": 10
+    }
+  }
+]
+

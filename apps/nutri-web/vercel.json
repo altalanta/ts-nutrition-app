@@ -1,0 +1,12 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "pnpm --filter nutri-web build",
+  "installCommand": "pnpm i",
+  "outputDirectory": ".next",
+  "env": {
+    "NEXT_PUBLIC_MOCK_MODE": "true",
+    "SHARE_SECRET": "@share_secret",
+    "SHARE_TTL_SECONDS": "604800"
+  }
+}
+

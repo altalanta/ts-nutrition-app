@@ -1,0 +1,20 @@
+{
+  "source": "NUTRITIONIX",
+  "source_id": "nx_12345",
+  "food_name": "Wild-Caught Salmon Fillet",
+  "brand": "Fresh Market",
+  "serving_name": "100g",
+  "serving_size_g": 100,
+  "barcode": "041196910184",
+  "nutrients": {
+    "DHA": 1.2,
+    "Selenium": 38.2,
+    "Vitamin_A_RAE": 28,
+    "Zinc": 0.58,
+    "Iron": 0.32,
+    "Iodine": 0,
+    "Choline": 88.9,
+    "Folate_DFE": 22
+  }
+}
+
