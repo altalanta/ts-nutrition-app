@@ -23,6 +23,7 @@ confidence_weights:
   FDC: 1.0        # USDA FoodData Central - gold standard, government verified
   NUTRITIONIX: 0.8 # Commercial database with good coverage, verified ingredients
   OFF: 0.6        # Open Food Facts - user-contributed, variable quality
+  derived: 0.9    # Derived/calculated values - high confidence
 
 metadata:
   sources:

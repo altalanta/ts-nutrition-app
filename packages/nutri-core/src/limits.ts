@@ -126,7 +126,7 @@ export function evaluateULs(
  * Calculate confidence score for a nutrient value
  */
 export function calculateConfidence(
-  source: 'FDC' | 'NUTRITIONIX' | 'OFF' | 'none',
+  source: 'FDC' | 'NUTRITIONIX' | 'OFF' | 'derived' | 'none',
   value: number,
   limits: Limits
 ): number {
