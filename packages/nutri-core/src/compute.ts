@@ -122,8 +122,8 @@ export function computeWeekly({
     // Calculate provenance and confidence from food sources
     // For now, use a simplified approach - in a real implementation,
     // this would aggregate provenance from all foods that contributed to this nutrient
-    const nutrientConfidence = calculateConfidence('derived' as 'derived', weeklyTotal, limits || { confidence_weights: {} } as Limits);
-    const nutrientProvenance = createProvenance('derived' as 'derived', nutrientConfidence);
+    const nutrientConfidence = calculateConfidence('derived', weeklyTotal, limits || { confidence_weights: {} } as Limits);
+    const nutrientProvenance = createProvenance('derived', nutrientConfidence);
 
     nutrients[nutrient] = {
       weekly_total: weeklyTotal,
