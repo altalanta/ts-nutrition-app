@@ -24,6 +24,7 @@ confidence_weights:
   NUTRITIONIX: 0.8 # Commercial database with good coverage, verified ingredients
   OFF: 0.6        # Open Food Facts - user-contributed, variable quality
   derived: 0.9    # Derived/calculated values - high confidence
+  none: 0.0       # No source available
 
 metadata:
   sources:

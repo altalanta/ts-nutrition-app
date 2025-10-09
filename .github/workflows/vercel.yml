@@ -9,6 +9,7 @@ on:
       - 'pnpm-lock.yaml'
       - 'package.json'
       - '.github/workflows/**'
+      - 'packages/nutri-importers/src/types.ts'
 jobs:
   deploy:
     runs-on: ubuntu-latest
