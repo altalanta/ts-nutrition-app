@@ -1,7 +1,7 @@
 import { NutrientKey } from 'nutri-core';
 
 // Types for the importers package
-export type DataSource = 'FDC' | 'NUTRITIONIX' | 'OFF';
+export type DataSource = 'FDC' | 'NUTRITIONIX' | 'OFF' | 'none';
 
 export interface NormalizedFood {
   source: DataSource;
@@ -100,7 +100,6 @@ export const FDC_NUTRIENT_MAP: Record<number, NutrientKey> = {
   1005: 'Selenium',    // Selenium, Se
   1051: 'Vitamin_A_RAE', // Vitamin A, RAE
   1090: 'Choline',     // Choline
-  1175: 'Vitamin_B6',  // Vitamin B-6
   1177: 'Folate_DFE',  // Folate, DFE
   1185: 'DHA',         // DHA
   1240: 'Iodine',      // Iodine, I
@@ -114,7 +113,7 @@ export const NUTRITIONIX_NUTRIENT_MAP: Record<number, NutrientKey> = {
   421: 'Choline',      // Choline
   435: 'Folate_DFE',   // Folate
   621: 'DHA',          // DHA
-  301: 'Iodine',       // Iodine (if available)
+  1240: 'Iodine',      // Iodine (if available)
 };
 
 export const OFF_NUTRIENT_MAP: Record<string, NutrientKey> = {
