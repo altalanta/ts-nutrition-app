@@ -50,6 +50,59 @@ pnpm -w build
 pnpm -w test
 ```
 
+## 🚀 Demo
+
+### Try the Live Demo
+
+Visit the **[Live Demo](https://ts-nutrition-app.vercel.app)** to see the nutrition tracker in action!
+
+**Features demonstrated:**
+- ✅ Mock Mode enabled (deterministic data, no external APIs)
+- ✅ Pre-loaded sample data for pregnancy nutrition tracking
+- ✅ Barcode scanning simulation
+- ✅ Weekly report generation with UL safety checks
+- ✅ PDF report export and sharing
+
+### Running the Demo Locally
+
+1. **Clone and setup:**
+   ```bash
+   git clone https://github.com/altalanta/ts-nutrition-app.git
+   cd ts-nutrition-app
+   pnpm install
+   ```
+
+2. **Start the web app:**
+   ```bash
+   pnpm dev:web
+   ```
+
+3. **Open your browser:**
+   Navigate to `http://localhost:3000`
+
+4. **Demo data is automatically loaded:**
+   - Sample 7-day food log with salmon, yogurt, and spinach
+   - Pregnancy trimester 2 life stage
+   - Demonstrates UL warnings for high Vitamin A intake
+
+### Mock Mode
+
+The demo runs in **Mock Mode** (`NEXT_PUBLIC_MOCK_MODE=true`) which:
+- Uses deterministic fixture data instead of real API calls
+- Requires no API keys or external services
+- Provides consistent results for demonstration
+- Includes safety checks and UL warnings
+
+**To disable Mock Mode:**
+```bash
+# Set environment variable
+NEXT_PUBLIC_MOCK_MODE=false
+
+# Provide API credentials for real data sources
+# NUTRITIONIX_APP_ID=your_id
+# NUTRITIONIX_APP_KEY=your_key
+```
+
 ## Usage
 
 ### Library Usage
