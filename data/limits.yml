@@ -1,0 +1,53 @@
+units_base:
+  µg: "microgram"
+  mg: "milligram"
+
+UL:
+  pregnancy:
+    Vitamin_A_RAE_µg: 3000  # 3000 µg RAE/day - IOM 2001, NIH ODS
+    Iodine_µg: 1100         # 1100 µg/day - IOM 2001, WHO 2007
+    Selenium_µg: 400        # 400 µg/day - IOM 2000
+    Zinc_mg: 40             # 40 mg/day - IOM 2001
+    Iron_mg: 45             # 45 mg/day - IOM 2001
+  lactation:
+    Vitamin_A_RAE_µg: 3000  # 3000 µg RAE/day - IOM 2001, NIH ODS
+    Iodine_µg: 1100         # 1100 µg/day - IOM 2001, WHO 2007
+    Selenium_µg: 400        # 400 µg/day - IOM 2000
+
+plausibility_per_100g:
+  Selenium_µg: "0..2000"    # Selenium shouldn't exceed 2000 µg/100g - Brazil nuts ~2000µg/100g
+  Iodine_µg: "0..5000"      # Iodine shouldn't exceed 5000 µg/100g - Seaweed ~5000µg/100g
+  Vitamin_A_RAE_µg: "0..5000" # Vitamin A shouldn't exceed 5000 µg/100g - Liver ~5000µg/100g
+
+confidence_weights:
+  FDC: 1.0        # USDA FoodData Central - gold standard, government verified
+  NUTRITIONIX: 0.8 # Commercial database with good coverage, verified ingredients
+  OFF: 0.6        # Open Food Facts - user-contributed, variable quality
+
+metadata:
+  sources:
+    Vitamin_A_RAE_µg:
+      ul:
+        citation: "Institute of Medicine, 2001, Dietary Reference Intakes for Vitamin A, Vitamin K, Arsenic, Boron, Chromium, Copper, Iodine, Iron, Manganese, Molybdenum, Nickel, Silicon, Vanadium, and Zinc; ACOG Practice Bulletin #196"
+        retrieved_on: "2025-10-08"
+        url: "https://nap.nationalacademies.org/catalog/10026/dietary-reference-intakes-for-vitamin-a-vitamin-k-arsenic-boron-chromium"
+    Iodine_µg:
+      ul:
+        citation: "Institute of Medicine, 2001, Dietary Reference Intakes for Vitamin A, Vitamin K, Arsenic, Boron, Chromium, Copper, Iodine, Iron, Manganese, Molybdenum, Nickel, Silicon, Vanadium, and Zinc; World Health Organization, 2007"
+        retrieved_on: "2025-10-08"
+        url: "https://nap.nationalacademies.org/catalog/10026/dietary-reference-intakes-for-vitamin-a-vitamin-k-arsenic-boron-chromium"
+    Selenium_µg:
+      ul:
+        citation: "Institute of Medicine, 2000, Dietary Reference Intakes for Vitamin C, Vitamin E, Selenium, and Carotenoids"
+        retrieved_on: "2025-10-08"
+        url: "https://nap.nationalacademies.org/catalog/9810/dietary-reference-intakes-for-vitamin-c-vitamin-e-selenium-and-carotenoids"
+    Zinc_mg:
+      ul:
+        citation: "Institute of Medicine, 2001, Dietary Reference Intakes for Vitamin A, Vitamin K, Arsenic, Boron, Chromium, Copper, Iodine, Iron, Manganese, Molybdenum, Nickel, Silicon, Vanadium, and Zinc"
+        retrieved_on: "2025-10-08"
+        url: "https://nap.nationalacademies.org/catalog/10026/dietary-reference-intakes-for-vitamin-a-vitamin-k-arsenic-boron-chromium"
+    Iron_mg:
+      ul:
+        citation: "Institute of Medicine, 2001, Dietary Reference Intakes for Vitamin A, Vitamin K, Arsenic, Boron, Chromium, Copper, Iodine, Iron, Manganese, Molybdenum, Nickel, Silicon, Vanadium, and Zinc"
+        retrieved_on: "2025-10-08"
+        url: "https://nap.nationalacademies.org/catalog/10026/dietary-reference-intakes-for-vitamin-a-vitamin-k-arsenic-boron-chromium"
