@@ -7,6 +7,8 @@ on:
       - 'packages/**'
       - 'data/**'
       - 'pnpm-lock.yaml'
+      - 'package.json'
+      - '.github/workflows/**'
 jobs:
   deploy:
     runs-on: ubuntu-latest
