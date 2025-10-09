@@ -17,11 +17,19 @@ function isMicronutrient(nutrient: NutrientKey): boolean {
 /**
  * Get confidence weight for a data source
  */
-function getConfidenceForSource(source: DataSource): number {
-  const weights = {
+function getConfidenceForSource(source: DataSource, limits?: any): number {
+  // If limits are provided, use them; otherwise fallback to defaults
+  if (limits?.confidence_weights?.[source] !== undefined) {
+    return limits.confidence_weights[source];
+  }
+
+  // Fallback defaults for when limits aren't available
+  const weights: Record<string, number> = {
     FDC: 1.0,
     NUTRITIONIX: 0.8,
     OFF: 0.6,
+    derived: 0.9,
+    none: 0.0,
   };
   return weights[source] || 0;
 }
@@ -59,7 +67,8 @@ export interface MergedFoodWithProvenance extends NormalizedFood {
  */
 export function mergeNormalizedFoods(
   primary: NormalizedFood,
-  fallbacks: NormalizedFood[]
+  fallbacks: NormalizedFood[],
+  limits?: any
 ): MergedFoodWithProvenance {
   // Start with primary source
   const merged: MergedFoodWithProvenance = {
@@ -116,7 +125,7 @@ export function mergeNormalizedFoods(
     for (const food of allFoods) {
       const value = food.nutrients[nutrient];
       if (value > 0) {
-        const baseConfidence = getConfidenceForSource(food.source);
+        const baseConfidence = getConfidenceForSource(food.source, limits);
         const completeness = calculateCompletenessFactor(food, allNutrients.length);
         const confidence = baseConfidence * completeness;
         nutrientChoices.push({ value, source: food.source, confidence, completeness });
