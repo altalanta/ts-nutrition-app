@@ -31,6 +31,26 @@ A TypeScript-based nutrition tracking system that loads food and nutrient data, 
 - **Data Importers**: HTTP clients for USDA FDC, Nutritionix, and Open Food Facts with intelligent merging
 - **Barcode Support**: Look up foods by barcode (EAN/UPC) across multiple data sources
 - **Web Interface**: Next.js app for searching foods, scanning barcodes, and viewing reports
+- **Camera Scanning**: In-browser barcode scanning using ZXing library (EAN-13, EAN-8, UPC-A, UPC-E, CODE-128)
+- **Progressive Web App (PWA)**: Installable app with offline support and service worker caching
+- **Mock Mode**: Deterministic demo data for development/testing without external API dependencies
+
+## Try the Live Demo
+
+🚀 **[Try the Nutrition Tracker Demo](https://your-vercel-app-url.vercel.app)**
+
+The live demo includes:
+- **Camera Barcode Scanning**: Use your device's camera to scan product barcodes
+- **Offline Support**: Install as a PWA for offline nutrition tracking
+- **Sample Data**: Pre-loaded with 7 days of sample nutrition data
+- **PDF Reports**: Generate clinician-ready reports with full provenance
+- **Safety Features**: UL compliance warnings and data quality indicators
+
+### Demo Features
+- **Camera Scanning**: Click "Scan Barcode" and allow camera access to scan EAN/UPC codes
+- **PWA Installation**: Look for the install prompt or use browser menu to install the app
+- **Offline Mode**: The demo works without internet connection using mock data
+- **Sample Log**: Pre-loaded with realistic nutrition data for testing reports
 
 ## Installation
 
@@ -133,10 +153,23 @@ pnpm run dev:web
 The web app provides:
 - **Onboarding**: Select your life stage (preconception, pregnancy trimesters, lactation)
 - **Search Tab**: Search for foods by name with provenance and confidence indicators
-- **Barcode Tab**: Enter barcode numbers for product lookup with safety validation
+- **Barcode Tab**: Camera scanning or manual entry of barcode numbers with safety validation
+- **PWA Features**: Install as an app with offline support and quick access from home screen
 - **Log Tab**: Daily food logging with weekly reports showing UL compliance and data quality
 - **PDF Export**: Generate clinician-ready PDF reports with full provenance and citations
 - **Settings**: Life stage management, export options, and privacy controls
+
+### Camera Barcode Scanning
+- **Browser Support**: Works in modern browsers with camera access (Chrome, Firefox, Safari, Edge)
+- **Supported Formats**: EAN-13, EAN-8, UPC-A, UPC-E, CODE-128 barcodes
+- **Permission Handling**: Graceful fallback to manual input if camera access is denied
+- **Feature Flag**: Controlled by `NEXT_PUBLIC_ENABLE_CAMERA` environment variable
+
+### PWA & Offline Support
+- **Service Worker**: Caches static assets and API responses for offline functionality
+- **Install Prompt**: Smart installation prompt that appears when appropriate
+- **Offline Mode**: Mock data ensures the demo works without internet connection
+- **App-like Experience**: Standalone display mode with custom theme colors
 
 ## Data Importers & Safety Model
 
@@ -216,7 +249,27 @@ Create a `.env` file based on `.env.example`:
 # Nutritionix API credentials (optional)
 NUTRITIONIX_APP_ID=your_app_id
 NUTRITIONIX_API_KEY=your_api_key
+
+# Web App Configuration
+NEXT_PUBLIC_MOCK_MODE=true          # Enable deterministic mock data
+NEXT_PUBLIC_ENABLE_CAMERA=true      # Enable camera barcode scanning
+SHARE_SECRET=your_32_char_secret    # For share link generation
+SHARE_TTL_SECONDS=604800            # 7 days in seconds
 ```
+
+### Mock Mode
+When `NEXT_PUBLIC_MOCK_MODE=true`, the application:
+- Returns deterministic sample data for all API endpoints
+- Seeds a 7-day nutrition log on first load
+- Works without external API keys or internet connection
+- Provides consistent data for testing and demonstrations
+
+### Camera Scanning
+When `NEXT_PUBLIC_ENABLE_CAMERA=true`:
+- Enables in-browser barcode scanning using device camera
+- Supports EAN-13, EAN-8, UPC-A, UPC-E, and CODE-128 formats
+- Requires user permission for camera access
+- Falls back gracefully to manual barcode entry if disabled
 
 ## Data Formats
 
