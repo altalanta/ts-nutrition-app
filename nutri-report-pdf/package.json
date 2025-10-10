@@ -1,0 +1,39 @@
+{
+  "name": "nutri-report-pdf",
+  "version": "1.0.0",
+  "description": "PDF report generator for clinician-facing nutrition summaries",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "test": "vitest run",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write src/**/*.ts"
+  },
+  "dependencies": {
+    "@react-pdf/renderer": "^3.1.0",
+    "nutri-core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "react": "^18.0.0",
+    "tsup": "^7.0.0",
+    "vitest": "^0.34.0",
+    "typescript": "^5.0.0",
+    "pdf-parse": "^1.1.1"
+  },
+  "keywords": ["nutrition", "pdf", "report", "clinician"],
+  "author": "Nutrition Engine Team",
+  "license": "MIT"
+}
+
+

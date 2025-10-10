@@ -1,0 +1,22 @@
+[
+  {
+    "source": "FDC",
+    "source_id": "168462",
+    "food_name": "Spinach, raw",
+    "brand": "Generic",
+    "serving_name": "100g",
+    "serving_size_g": 100,
+    "barcode": null,
+    "nutrients": {
+      "DHA": 0,
+      "Selenium": 1,
+      "Vitamin_A_RAE": 469,
+      "Zinc": 0.53,
+      "Iron": 2.71,
+      "Iodine": 0,
+      "Choline": 19.3,
+      "Folate_DFE": 194
+    }
+  }
+]
+
