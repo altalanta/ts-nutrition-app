@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { NormalizedFood } from 'nutri-importers'
+import ProgressChart from './ProgressChart'
 
 interface LogItem {
   food: NormalizedFood
@@ -13,13 +14,27 @@ interface LogSectionProps {
   items: LogItem[]
   onRemove: (index: number) => void
   onUpdateServings: (index: number, servings: number) => void
+  onReportGenerated?: (report: any) => void
 }
 
-export default function LogSection({ items, onRemove, onUpdateServings }: LogSectionProps) {
+export default function LogSection({ items, onRemove, onUpdateServings, onReportGenerated }: LogSectionProps) {
   const [selectedStage, setSelectedStage] = useState('pregnancy_trimester2')
   const [showReport, setShowReport] = useState(false)
   const [report, setReport] = useState<any>(null)
   const [generating, setGenerating] = useState(false)
+  const [historicalReports, setHistoricalReports] = useState<any[]>([])
+
+  // Load historical reports on mount
+  useMemo(() => {
+    const saved = localStorage.getItem('nutrition-reports-history')
+    if (saved) {
+      try {
+        setHistoricalReports(JSON.parse(saved))
+      } catch (error) {
+        console.error('Failed to parse historical reports:', error)
+      }
+    }
+  }, [])
 
   const generateReport = async () => {
     if (items.length === 0) return
@@ -47,6 +62,18 @@ export default function LogSection({ items, onRemove, onUpdateServings }: LogSec
       if (response.ok) {
         setReport(data.report)
         setShowReport(true)
+
+        // Add to historical reports
+        const newReport = {
+          ...data.report,
+          generated_at: new Date().toISOString()
+        }
+
+        const updatedReports = [...historicalReports, newReport]
+        setHistoricalReports(updatedReports)
+        localStorage.setItem('nutrition-reports-history', JSON.stringify(updatedReports))
+
+        onReportGenerated?.(data.report)
       } else {
         alert(`Error: ${data.error}`)
       }
@@ -209,6 +236,14 @@ export default function LogSection({ items, onRemove, onUpdateServings }: LogSec
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Progress Chart - only show if we have historical data */}
+      {historicalReports.length > 1 && (
+        <div className="mt-8">
+          <ProgressChart trends={[]} />
+          {/* TODO: Pass actual trend data from analytics */}
         </div>
       )}
     </div>
