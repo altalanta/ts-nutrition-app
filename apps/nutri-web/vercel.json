@@ -5,6 +5,7 @@
   "outputDirectory": ".next",
   "env": {
     "NEXT_PUBLIC_MOCK_MODE": "true",
+    "NEXT_PUBLIC_ENABLE_CAMERA": "true",
     "SHARE_SECRET": "@share_secret",
     "SHARE_TTL_SECONDS": "604800"
   }

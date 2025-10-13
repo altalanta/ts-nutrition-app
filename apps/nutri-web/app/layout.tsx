@@ -6,7 +6,10 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Nutrition Tracker',
-  description: 'Track your daily nutrition intake and get weekly reports',
+  description: 'Track your daily nutrition intake and get personalized reports',
+  manifest: '/manifest.webmanifest',
+  themeColor: '#3b82f6',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
 }
 
 export default function RootLayout({
