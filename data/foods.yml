@@ -1,0 +1,273 @@
+- id: salmon_atlantic
+  display: "Atlantic salmon, cooked (3 oz)"
+  tags: ["seafood","high_dha","mercury_low","pescetarian","gluten_free"]
+  nutrients:
+    DHA: 1200
+    Selenium: 40
+    Vitamin_A_RAE: 20
+    Iodine: 30
+    Iron: 0.3
+    Zinc: 0.4
+    Choline: 80
+    Folate_DFE: 10
+
+- id: salmon_farmed
+  display: "Farmed salmon, cooked (3 oz)"
+  tags: ["seafood","high_dha","mercury_low","pescetarian","gluten_free"]
+  nutrients:
+    DHA: 1000
+    Selenium: 35
+    Vitamin_A_RAE: 15
+    Iodine: 25
+    Iron: 0.4
+    Zinc: 0.5
+    Choline: 75
+    Folate_DFE: 8
+
+- id: sardines_canned
+  display: "Sardines, canned in oil (3 oz)"
+  tags: ["seafood","high_dha","mercury_low","pescetarian","gluten_free","calcium_rich"]
+  nutrients:
+    DHA: 800
+    Selenium: 50
+    Vitamin_A_RAE: 10
+    Iodine: 20
+    Iron: 2.5
+    Zinc: 1.2
+    Choline: 65
+    Folate_DFE: 12
+    Calcium: 325
+
+- id: tuna_light
+  display: "Light tuna, canned in water (3 oz)"
+  tags: ["seafood","mercury_moderate","pescetarian","gluten_free","high_protein"]
+  nutrients:
+    DHA: 200
+    Selenium: 60
+    Vitamin_A_RAE: 5
+    Iodine: 15
+    Iron: 1.0
+    Zinc: 0.8
+    Choline: 25
+    Folate_DFE: 5
+
+- id: cod_atlantic
+  display: "Atlantic cod, cooked (3 oz)"
+  tags: ["seafood","mercury_low","pescetarian","gluten_free","lean_protein"]
+  nutrients:
+    DHA: 150
+    Selenium: 35
+    Vitamin_A_RAE: 5
+    Iodine: 90
+    Iron: 0.3
+    Zinc: 0.4
+    Choline: 60
+    Folate_DFE: 8
+
+- id: shrimp_cooked
+  display: "Shrimp, cooked (3 oz)"
+  tags: ["seafood","mercury_low","pescetarian","gluten_free","low_calorie","shellfish"]
+  nutrients:
+    DHA: 100
+    Selenium: 40
+    Vitamin_A_RAE: 0
+    Iodine: 35
+    Iron: 0.3
+    Zinc: 1.0
+    Choline: 80
+    Folate_DFE: 3
+
+- id: spinach_fresh
+  display: "Spinach, fresh (1 cup)"
+  tags: ["vegetables","iron_rich","folate_rich","vegetarian","vegan","gluten_free","low_calorie"]
+  nutrients:
+    DHA: 0
+    Selenium: 1
+    Vitamin_A_RAE: 141
+    Iodine: 0
+    Iron: 0.8
+    Zinc: 0.2
+    Choline: 18
+    Folate_DFE: 58
+
+- id: kale_cooked
+  display: "Kale, cooked (1 cup)"
+  tags: ["vegetables","iron_rich","vitamin_a_rich","vegetarian","vegan","gluten_free","low_calorie"]
+  nutrients:
+    DHA: 0
+    Selenium: 1
+    Vitamin_A_RAE: 885
+    Iodine: 0
+    Iron: 1.0
+    Zinc: 0.2
+    Choline: 0
+    Folate_DFE: 17
+
+- id: lentils_cooked
+  display: "Lentils, cooked (1 cup)"
+  tags: ["legumes","iron_rich","folate_rich","vegetarian","vegan","gluten_free","high_protein","fiber_rich"]
+  nutrients:
+    DHA: 0
+    Selenium: 5
+    Vitamin_A_RAE: 0
+    Iodine: 0
+    Iron: 6.6
+    Zinc: 2.5
+    Choline: 65
+    Folate_DFE: 358
+
+- id: chickpeas_cooked
+  display: "Chickpeas, cooked (1 cup)"
+  tags: ["legumes","iron_rich","zinc_rich","vegetarian","vegan","gluten_free","high_protein","fiber_rich"]
+  nutrients:
+    DHA: 0
+    Selenium: 6
+    Vitamin_A_RAE: 3
+    Iodine: 0
+    Iron: 4.7
+    Zinc: 2.5
+    Choline: 70
+    Folate_DFE: 282
+
+- id: beef_liver_cooked
+  display: "Beef liver, cooked (3 oz)"
+  tags: ["organ_meat","vitamin_a_rich","iron_rich","folate_rich","high_cholesterol","omnivore"]
+  nutrients:
+    DHA: 0
+    Selenium: 25
+    Vitamin_A_RAE: 5000
+    Iodine: 0
+    Iron: 5.0
+    Zinc: 4.0
+    Choline: 290
+    Folate_DFE: 215
+
+- id: chicken_liver_cooked
+  display: "Chicken liver, cooked (3 oz)"
+  tags: ["organ_meat","vitamin_a_rich","iron_rich","folate_rich","high_cholesterol","omnivore"]
+  nutrients:
+    DHA: 0
+    Selenium: 50
+    Vitamin_A_RAE: 3000
+    Iodine: 0
+    Iron: 8.0
+    Zinc: 2.5
+    Choline: 200
+    Folate_DFE: 400
+
+- id: eggs_large
+  display: "Large eggs (2 eggs)"
+  tags: ["eggs","choline_rich","selenium_rich","omnivore","vegetarian","gluten_free","high_protein"]
+  nutrients:
+    DHA: 70
+    Selenium: 30
+    Vitamin_A_RAE: 150
+    Iodine: 25
+    Iron: 1.2
+    Zinc: 1.0
+    Choline: 294
+    Folate_DFE: 44
+
+- id: greek_yogurt
+  display: "Greek yogurt, plain (1 cup)"
+  tags: ["dairy","calcium_rich","protein_rich","vegetarian","gluten_free","probiotic"]
+  nutrients:
+    DHA: 0
+    Selenium: 20
+    Vitamin_A_RAE: 0
+    Iodine: 50
+    Iron: 0.3
+    Zinc: 1.5
+    Choline: 40
+    Folate_DFE: 20
+
+- id: cheddar_cheese
+  display: "Cheddar cheese (1 oz)"
+  tags: ["dairy","calcium_rich","vitamin_a_rich","vegetarian","gluten_free","high_calorie"]
+  nutrients:
+    DHA: 0
+    Selenium: 3
+    Vitamin_A_RAE: 85
+    Iodine: 0
+    Iron: 0.2
+    Zinc: 0.9
+    Choline: 4
+    Folate_DFE: 5
+
+- id: almonds_raw
+  display: "Almonds, raw (1 oz)"
+  tags: ["nuts","vitamin_e_rich","healthy_fat","vegetarian","vegan","gluten_free"]
+  nutrients:
+    DHA: 0
+    Selenium: 1
+    Vitamin_A_RAE: 0
+    Iodine: 0
+    Iron: 1.0
+    Zinc: 0.9
+    Choline: 15
+    Folate_DFE: 14
+
+- id: walnuts_raw
+  display: "Walnuts, raw (1 oz)"
+  tags: ["nuts","omega3_rich","healthy_fat","vegetarian","vegan","gluten_free"]
+  nutrients:
+    DHA: 0
+    Selenium: 1
+    Vitamin_A_RAE: 0
+    Iodine: 0
+    Iron: 0.8
+    Zinc: 0.9
+    Choline: 11
+    Folate_DFE: 28
+
+- id: seaweed_nori
+  display: "Nori seaweed sheets (1 sheet)"
+  tags: ["seaweed","iodine_rich","vegan","vegetarian","gluten_free","low_calorie","asian"]
+  nutrients:
+    DHA: 0
+    Selenium: 0.2
+    Vitamin_A_RAE: 9
+    Iodine: 42
+    Iron: 0.2
+    Zinc: 0.1
+    Choline: 0
+    Folate_DFE: 10
+
+- id: iodized_salt
+  display: "Iodized salt (1/4 tsp)"
+  tags: ["iodine_rich","vegan","vegetarian","gluten_free","pantry_staple"]
+  nutrients:
+    DHA: 0
+    Selenium: 0
+    Vitamin_A_RAE: 0
+    Iodine: 71
+    Iron: 0
+    Zinc: 0
+    Choline: 0
+    Folate_DFE: 0
+
+- id: fortified_cereal
+  display: "Iron-fortified cereal (1 cup)"
+  tags: ["grains","iron_fortified","folate_fortified","vegetarian","vegan","breakfast"]
+  nutrients:
+    DHA: 0
+    Selenium: 10
+    Vitamin_A_RAE: 150
+    Iodine: 0
+    Iron: 18.0
+    Zinc: 3.0
+    Choline: 25
+    Folate_DFE: 200
+
+- id: quinoa_cooked
+  display: "Quinoa, cooked (1 cup)"
+  tags: ["grains","complete_protein","iron_rich","vegetarian","vegan","gluten_free","fiber_rich"]
+  nutrients:
+    DHA: 0
+    Selenium: 3
+    Vitamin_A_RAE: 0
+    Iodine: 0
+    Iron: 2.8
+    Zinc: 2.0
+    Choline: 50
+    Folate_DFE: 78

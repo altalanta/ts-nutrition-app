@@ -1,0 +1,14 @@
+{
+  "salmon_atlantic": "low",
+  "salmon_farmed": "low",
+  "sardines_canned": "low",
+  "tuna_light": "moderate",
+  "cod_atlantic": "low",
+  "shrimp_cooked": "low",
+  "tuna_albacore": "high",
+  "swordfish": "high",
+  "king_mackerel": "high",
+  "tilefish": "high",
+  "shark": "high",
+  "orange_roughy": "high"
+}

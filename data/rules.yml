@@ -1,0 +1,10 @@
+deficit_threshold: 0.9     # recommend if <90% of weekly goal
+surplus_ul_warn: 0.8       # show caution items when ≥80% UL
+weights:
+  DHA: 1.0
+  Iron: 1.0
+  Iodine: 0.9
+  Selenium: 0.7
+  Choline: 0.8
+  Folate_DFE: 0.9
+  Vitamin_A_RAE: 0.8
