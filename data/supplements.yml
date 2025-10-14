@@ -1,0 +1,98 @@
+- id: prenatal_generic_a
+  display: "Prenatal A (no retinol; beta-carotene only)"
+  form: "tablet"
+  nutrients:
+    Folate_DFE: 600
+    Iron: 27
+    Iodine: 150
+    Choline: 55
+    Vitamin_A_RAE: 0   # carotene-only
+  cautions: ["avoid if iron intolerance"]
+
+- id: prenatal_generic_b
+  display: "Prenatal B (with retinol)"
+  form: "tablet"
+  nutrients:
+    Folate_DFE: 800
+    Iron: 27
+    Iodine: 150
+    Choline: 25
+    Vitamin_A_RAE: 500  # contains retinol
+  cautions: ["avoid if iron intolerance", "contains retinol - monitor Vitamin A intake"]
+
+- id: dha_vegetarian
+  display: "DHA supplement (algae-based, vegetarian)"
+  form: "softgel"
+  nutrients:
+    DHA: 200
+  cautions: ["consult healthcare provider before starting"]
+
+- id: dha_fish_oil
+  display: "DHA supplement (fish oil)"
+  form: "softgel"
+  nutrients:
+    DHA: 250
+  cautions: ["contains fish", "consult healthcare provider before starting"]
+
+- id: iodine_potassium
+  display: "Potassium iodide supplement"
+  form: "tablet"
+  nutrients:
+    Iodine: 225
+  cautions: ["avoid if iodine allergy", "do not exceed recommended dose"]
+
+- id: iron_ferrous_sulfate
+  display: "Iron supplement (ferrous sulfate)"
+  form: "tablet"
+  nutrients:
+    Iron: 65
+  cautions: ["may cause constipation", "avoid if iron intolerance", "take with vitamin C for better absorption"]
+
+- id: iron_ferrous_gluconate
+  display: "Iron supplement (ferrous gluconate)"
+  form: "tablet"
+  nutrients:
+    Iron: 27
+  cautions: ["may cause constipation", "avoid if iron intolerance", "take with vitamin C for better absorption"]
+
+- id: choline_bitartrate
+  display: "Choline supplement (bitartrate)"
+  form: "capsule"
+  nutrients:
+    Choline: 250
+  cautions: ["may cause fishy body odor", "avoid if trimethylamine intolerance"]
+
+- id: selenium_yeast
+  display: "Selenium supplement (yeast-based)"
+  form: "tablet"
+  nutrients:
+    Selenium: 200
+  cautions: ["do not exceed recommended dose", "toxicity risk at high doses"]
+
+- id: folate_supplement
+  display: "Folate supplement (DFE)"
+  form: "tablet"
+  nutrients:
+    Folate_DFE: 400
+  cautions: ["avoid if folate allergy"]
+
+- id: zinc_gluconate
+  display: "Zinc supplement (gluconate)"
+  form: "tablet"
+  nutrients:
+    Zinc: 50
+  cautions: ["may cause nausea", "avoid if zinc allergy", "do not take with dairy"]
+
+- id: vitamin_a_beta_carotene
+  display: "Vitamin A supplement (beta-carotene only)"
+  form: "softgel"
+  nutrients:
+    Vitamin_A_RAE: 2500  # beta-carotene
+  cautions: ["smokers should avoid high-dose beta-carotene"]
+
+- id: vitamin_a_retinol
+  display: "Vitamin A supplement (retinol)"
+  form: "softgel"
+  nutrients:
+    Vitamin_A_RAE: 2500  # retinol form
+  cautions: ["avoid during pregnancy", "toxicity risk at high doses"]
