@@ -1,6 +1,10 @@
-# TypeScript Nutrition Engine
+# 🤰 Maternal Nutrition Tracker
 
-A TypeScript-based nutrition tracking system that loads food and nutrient data, aggregates daily intake to weekly totals, compares against life-stage targets, and identifies nutritional gaps and surpluses.
+A TypeScript-based maternal nutrition platform providing evidence-informed guidance for conception, pregnancy, and breastfeeding. Track daily intake, compare against stage-specific nutrient targets, and receive personalized recommendations for optimal maternal and fetal health.
+
+## Project Rules
+
+See [AGENT_RULES.md](./AGENT_RULES.md) for canonical scope, safety, and contribution requirements.
 
 ## Project Structure
 
@@ -21,11 +25,19 @@ A TypeScript-based nutrition tracking system that loads food and nutrient data, 
 
 ## Features
 
+### 🤰 Maternal Nutrition Mode
+- **Life Stage Support**: Preconception, Trimester 1, Trimester 2, Trimester 3, and Breastfeeding stages
+- **Evidence-Based Targets**: Stage-specific RDA/AI values for 10 key nutrients (Folate, Choline, Iron, Iodine, DHA, Calcium, Vitamin D, B12, Protein, Fiber)
+- **Interactive Life Stage Picker**: Global selector that updates nutrient targets and persists in URL
+- **Spotlight Nutrient Cards**: Prominent display of key nutrients for current stage with targets and food sources
+- **Safety Badge System**: UL risk warnings, pregnancy cautions, and supplement guidance
+- **Educational Disclaimers**: Clear messaging that content is educational, not medical advice
+
+### Core Features
 - **Pure TypeScript**: Framework-agnostic library that can be used in Next.js, React Native, or any TypeScript project
 - **CSV/YAML Data Loading**: Load food databases and nutrition goals from standard formats
 - **Weekly Aggregation**: Convert daily food logs into weekly nutrient totals
-- **Life-stage Targets**: Compare intake against specific nutritional goals for different life stages
-- **Gap Analysis**: Identify deficient and surplus nutrients
+- **Gap Analysis**: Identify deficient and surplus nutrients with personalized recommendations
 - **Unit Conversion**: Proper handling of mg/µg conversions with branded types for type safety
 - **CLI Interface**: Command-line tool for generating reports
 - **Data Importers**: HTTP clients for USDA FDC, Nutritionix, and Open Food Facts with intelligent merging
@@ -34,12 +46,110 @@ A TypeScript-based nutrition tracking system that loads food and nutrient data, 
 - **Camera Scanning**: In-browser barcode scanning using ZXing library (EAN-13, EAN-8, UPC-A, UPC-E, CODE-128)
 - **Progressive Web App (PWA)**: Installable app with offline support and service worker caching
 - **Mock Mode**: Deterministic demo data for development/testing without external API dependencies
+- **Safety-First Design**: Mercury warnings for pregnancy, Vitamin A UL compliance, and preference filtering
+
+## 🤰 Maternal Nutrition Features
+
+### Life Stage Selection
+The app now prominently features a **Life Stage Picker** at the top of every page:
+
+- **Preconception**: Planning for pregnancy
+- **Trimester 1**: Weeks 1-12 (neural tube development)
+- **Trimester 2**: Weeks 13-26 (rapid growth phase)
+- **Trimester 3**: Weeks 27-40 (final development)
+- **Breastfeeding**: Postpartum & nursing
+
+### Key Nutrients by Stage
+Each stage has tailored targets for 10 essential nutrients:
+
+| Nutrient | Preconception | T1 | T2 | T3 | Breastfeeding |
+|----------|---------------|----|----|----|---------------|
+| **Folate (DFE)** | 400 mcg | 600 mcg | 600 mcg | 600 mcg | 500 mcg |
+| **Choline** | 425 mg | 450 mg | 450 mg | 450 mg | 550 mg |
+| **Iron** | 18 mg | 27 mg | 27 mg | 27 mg | 9 mg |
+| **Iodine** | 150 mcg | 220 mcg | 220 mcg | 220 mcg | 290 mcg |
+| **DHA** | 200 mg | 200 mg | 200 mg | 200 mg | 200 mg |
+| **Calcium** | 1000 mg | 1000 mg | 1000 mg | 1000 mg | 1000 mg |
+| **Vitamin D** | 600 IU | 600 IU | 600 IU | 600 IU | 600 IU |
+| **B12** | 2.4 mcg | 2.6 mcg | 2.6 mcg | 2.6 mcg | 2.8 mcg |
+| **Protein** | 46 g | 71 g | 71 g | 71 g | 71 g |
+| **Fiber** | 25 g | 28 g | 28 g | 28 g | 29 g |
+
+### Safety Features
+- **UL Risk Badges**: Warnings when approaching Upper Limits (e.g., Vitamin A, Folic Acid)
+- **Pregnancy Cautions**: Specific guidance for pregnancy (e.g., "Choose low-mercury fish")
+- **Supplement Guidance**: Evidence-based recommendations for prenatal supplements
+
+### URL Persistence
+Life stage selection persists in the URL:
+```
+https://app.com/?stage=t2  # Trimester 2
+https://app.com/?stage=breastfeeding  # Breastfeeding
+```
+
+## Data Model & Customization
+
+### Maternal Nutrition Data Structure
+
+Nutrient targets and guidance are defined in `apps/nutri-web/src/data/maternalNutrients.ts`:
+
+```typescript
+export type Stage = 'preconception' | 't1' | 't2' | 't3' | 'breastfeeding';
+
+export interface NutrientMeta {
+  id: 'folate' | 'choline' | 'iron' | 'iodine' | 'dha' | 'calcium' | 'vitamin_d' | 'b12' | 'protein' | 'fiber';
+  label: string;
+  spotlight: boolean; // Show in hero deck
+  stages: Partial<Record<Stage, StageTarget>>;
+  cautions?: string[]; // Safety warnings
+  foodSources: { name: string; typicalServing: string; amount: string; }[];
+}
+
+export interface StageTarget {
+  rda?: number;    // Recommended Dietary Allowance
+  ai?: number;     // Adequate Intake
+  ul?: number;     // Tolerable Upper Limit
+  unit: Unit;      // 'mcg DFE' | 'mg' | 'IU' | 'g' | 'mcg' | '%'
+  note?: string;   // Stage-specific guidance
+}
+```
+
+### Updating Nutrient Targets
+
+To modify targets for any life stage:
+
+1. Edit `apps/nutri-web/src/data/maternalNutrients.ts`
+2. Update the `rda`, `ai`, or `ul` values for specific stages
+3. Add or modify `cautions` and `foodSources` arrays
+4. Update the `note` field for stage-specific guidance
+
+Example:
+```typescript
+stages: {
+  t1: {
+    rda: 600,           // Update RDA value
+    ul: 1000,          // Update UL value
+    unit: 'mcg DFE',
+    note: 'Updated guidance for trimester 1'  // Update note
+  }
+}
+```
+
+### Component Architecture
+
+- **`LifeStagePicker`**: Global stage selector with URL persistence
+- **`SpotlightNutrients`**: Displays key nutrients for current stage
+- **`SafetyBadge`**: Shows UL risks and pregnancy cautions
+- **`EducationalOnlyNotice`**: Disclaimer component for educational content
 
 ## Try the Live Demo
 
-🚀 **[Try the Nutrition Tracker Demo](https://your-vercel-app-url.vercel.app)**
+🚀 **[Try the Maternal Nutrition Demo](https://your-vercel-app-url.vercel.app)**
 
 The live demo includes:
+- **Life Stage Selection**: Interactive picker for all maternal stages
+- **Dynamic Nutrient Targets**: Spotlight cards update based on selected stage
+- **Safety Warnings**: UL badges and pregnancy-specific cautions
 - **Camera Barcode Scanning**: Use your device's camera to scan product barcodes
 - **Offline Support**: Install as a PWA for offline nutrition tracking
 - **Sample Data**: Pre-loaded with 7 days of sample nutrition data
@@ -58,6 +168,18 @@ The live demo includes:
 pnpm install
 ```
 
+## Local Auth & Persistence
+
+The `nutri-web` app ships with a local SQLite database plus NextAuth credentials flow for demos.
+
+1. `cd apps/nutri-web`
+2. `cp .env.example .env.local` and update `NEXTAUTH_SECRET`
+3. (Optional) set `NEXT_PUBLIC_MOCK_MODE=false` to use the database instead of localStorage
+4. `pnpm --filter nutri-web exec prisma migrate deploy`
+5. `pnpm --filter nutri-web dev`
+
+Sign in with any email + password in development—the first login seeds the account automatically. When mock mode is `true`, the UI stays fully offline and ignores the database.
+
 ## Building
 
 ```bash
@@ -68,6 +190,12 @@ pnpm -w build
 
 ```bash
 pnpm -w test
+```
+
+To run the Playwright smoke test (requires the dev server):
+
+```bash
+pnpm --filter nutri-web test:e2e
 ```
 
 ## Usage
@@ -170,6 +298,136 @@ The web app provides:
 - **Install Prompt**: Smart installation prompt that appears when appropriate
 - **Offline Mode**: Mock data ensures the demo works without internet connection
 - **App-like Experience**: Standalone display mode with custom theme colors
+
+## Recommendations (How it works)
+
+The recommendations engine turns weekly reports into **actionable fixes** by suggesting specific foods and supplements to close nutrient gaps while respecting user preferences and safety guidelines.
+
+### Core Features
+
+- **Deficit Detection**: Identifies nutrients below 90% of weekly goals (configurable threshold)
+- **Safety-First Scoring**: Penalizes suggestions that push Vitamin A or other nutrients toward UL limits
+- **Preference Filtering**: Respects diet type (omnivore/pescetarian/vegetarian/vegan), allergies, and cultural preferences
+- **Mercury Awareness**: Excludes high-mercury fish for pregnancy/lactation unless explicitly allowed
+- **Supplement Intelligence**: Suggests supplements only when food-based fixes are insufficient
+- **Deterministic Ranking**: Same inputs always produce same suggestions for reproducible results
+
+### Safety Guards
+
+**Vitamin A Retinol Protection**:
+- Supplements containing retinol are down-weighted when Vitamin A intake ≥80% of UL
+- Organ meats (liver) trigger warnings when approaching UL limits
+- Beta-carotene only supplements are preferred for pregnancy
+
+**Mercury Safety**:
+- Fish categorized as "high" mercury are excluded during pregnancy/lactation
+- "Moderate" mercury fish show warnings but are not excluded
+- Based on FDA/EPA guidelines with species-specific mapping
+
+**Preference Compliance**:
+- Diet filters exclude incompatible foods (e.g., no meat for vegetarians)
+- Allergy tags prevent suggestions containing allergens
+- Cultural preferences prioritize familiar foods when available
+
+### Recommendation Algorithm
+
+```typescript
+// Simplified scoring logic
+score = Σ(weight[nutrient] × deltaTowardsGoal) -
+        Σ(UL_pressure_penalties) -
+        Σ(safety_penalties) -
+        Σ(preference_penalties)
+```
+
+**Scoring Weights** (configurable in `data/reco/rules.yml`):
+- DHA: 1.0 (highest priority for pregnancy brain development)
+- Iron: 1.0 (critical for maternal health and fetal growth)
+- Iodine: 0.9 (essential for thyroid function)
+- Folate: 0.9 (neural tube development)
+- Choline: 0.8 (brain development)
+- Vitamin A: 0.8 (vision and immune function)
+- Selenium: 0.7 (antioxidant)
+
+**Safety Penalties**:
+- Vitamin A UL proximity: -0.2 points per suggestion
+- Mercury warnings: -0.3 points per suggestion
+- Organ meat warnings: -0.2 points per suggestion
+
+### Data Sources
+
+**Food Catalog** (`data/reco/foods.yml`):
+- Canonical foods with per-serving nutrient data
+- Tags for diet compatibility, allergens, and cultural preferences
+- Mercury classifications for safety filtering
+
+**Supplement Catalog** (`data/reco/supplements.yml`):
+- Common prenatal vitamins and single-nutrient supplements
+- Form distinctions (retinol vs beta-carotene)
+- Usage cautions and contraindications
+
+**Mercury Database** (`data/reco/mercury.json`):
+- FDA/EPA classifications: "low" | "moderate" | "high" | "avoid"
+- Species-specific mappings for safety filtering
+
+### User Preferences
+
+**Diet Types**:
+- **Omnivore**: All foods including meat, dairy, eggs
+- **Pescetarian**: Includes fish/seafood but no other meat
+- **Vegetarian**: No meat, includes dairy/eggs
+- **Vegan**: No animal products
+
+**Customization Options**:
+- Allergies (comma-separated): "peanuts, shellfish, dairy"
+- Foods to avoid: "organ_meat, high_mercury"
+- Budget preference: "low" | "medium" | "high"
+- Cultural preferences: "asian, mediterranean, latin"
+- Maximum suggestions per day: 1-5 (default: 2)
+
+### Integration Points
+
+**Web Interface**:
+- Settings page for preference management (auto-saves to localStorage)
+- Recommendations panel in weekly reports
+- "Add to Log" buttons for one-click logging
+
+**PDF Reports**:
+- "Suggested Next Steps" section with top 5 recommendations
+- Safety warnings and rationale included
+- Professional format suitable for clinician review
+
+**API Endpoints**:
+- `POST /api/reco` - Generate recommendations for a report
+- `POST /api/report/pdf` - Include recommendations in PDF export
+
+### Example Output
+
+```json
+{
+  "id": "salmon_atlantic",
+  "kind": "food",
+  "display": "Atlantic salmon, cooked (3 oz)",
+  "servings": 7,
+  "nutrientDeltas": {
+    "DHA": 8400,
+    "Selenium": 280,
+    "Vitamin_A_RAE": 140
+  },
+  "rationale": ["DHA deficit 75%", "low mercury"],
+  "cautions": [],
+  "score": 0.85
+}
+```
+
+### Important Disclaimers
+
+**Not Medical Advice**: Recommendations are informational tools based on nutritional science and should not replace professional healthcare guidance.
+
+**Individual Variation**: Nutrient needs vary by individual factors including genetics, health conditions, and activity level.
+
+**Supplement Caution**: Always consult healthcare providers before starting supplements, especially during pregnancy.
+
+**Data Accuracy**: While we use authoritative sources (USDA, FDA), food nutrient content can vary by preparation, storage, and sourcing.
 
 ## Data Importers & Safety Model
 
