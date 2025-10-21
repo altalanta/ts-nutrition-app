@@ -87,6 +87,104 @@ https://app.com/?stage=t2  # Trimester 2
 https://app.com/?stage=breastfeeding  # Breastfeeding
 ```
 
+## 🎨 Design System & Components
+
+### Design Tokens
+The new UI uses a comprehensive design system with CSS custom properties defined in `apps/nutri-web/tokens.css`:
+
+```css
+/* Spacing: 4, 8, 12, 16, 24, 32 */
+--space-xs: 4px; --space-sm: 8px; --space-md: 12px; --space-lg: 16px;
+
+/* Typography scale */
+--font-size-h1: 28px; --line-height-h1: 36px;
+--font-size-body: 16px; --line-height-body: 24px;
+
+/* Status colors (WCAG AA compliant) */
+--color-status-ok: 34 197 94;
+--color-status-low: 245 158 11;
+--color-status-near-ul: 239 68 68;
+```
+
+### Component Architecture
+
+#### Core Layout Components
+- **`AppShell`**: Top bar, container, and footer CTA structure
+- **`TopBarActions`**: Sign in button and menu actions
+- **`FooterCTA`**: Sticky bottom actions that change by stage
+
+#### Interactive Components
+- **`LifeStageSegmented`**: Touch-friendly stage selector with progress visualization
+- **`PrioritiesStrip`**: Horizontally scrollable priority nutrients with icons
+- **`NutrientCard`**: Progress bars, status indicators, and action buttons
+- **`SafetyBadge`**: UL risk warnings and pregnancy cautions
+- **`EducationalOnlyNotice`**: Educational disclaimer with dismiss functionality
+
+#### Data & State Management
+- **Zustand Store**: `useMaternalNutritionStore()` with localStorage persistence
+- **URL Persistence**: `?stage=t2` deep-linking support
+- **Priority Mapping**: Stage-specific nutrient priorities in `sampleNutrients.ts`
+
+### Component Usage
+
+```tsx
+import {
+  AppShell,
+  TopBarActions,
+  LifeStageSegmented,
+  PrioritiesStrip,
+  NutrientCard,
+  FooterCTA
+} from '@/components/ui'
+
+// Complete page example
+function MaternalNutritionPage() {
+  const { selectedStage, setSelectedStage } = useMaternalNutritionStore()
+
+  return (
+    <AppShell
+      title="Maternal nutrition"
+      subtitle="Focused guidance for conception, pregnancy, and breastfeeding"
+      actions={<TopBarActions />}
+      footerCTA={<FooterCTA currentStage={selectedStage} />}
+    >
+      <LifeStageSegmented
+        selectedStage={selectedStage}
+        onStageChange={setSelectedStage}
+      />
+
+      <PrioritiesStrip currentStage={selectedStage} />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {nutrients.map(nutrient => (
+          <NutrientCard
+            key={nutrient.id}
+            nutrient={nutrient}
+            onFoodSourcesClick={handleFoodSources}
+            onLogIntakeClick={handleLogIntake}
+          />
+        ))}
+      </div>
+    </AppShell>
+  )
+}
+```
+
+### Accessibility Features
+
+- **WCAG AA Compliance**: All colors meet contrast requirements
+- **Keyboard Navigation**: Full keyboard support with visible focus states
+- **Touch Targets**: Minimum 44px touch targets for mobile
+- **Screen Reader Support**: Proper ARIA labels and roles
+- **Reduced Motion**: Respects `prefers-reduced-motion` setting
+
+### Responsive Design
+
+- **Mobile First**: Designed for mobile with progressive enhancement
+- **Touch-Friendly**: Large buttons and easy navigation
+- **Grid Layouts**: 1-column mobile, 2-column tablet and up
+- **Safe Areas**: Respects device safe areas and notches
+
 ## Data Model & Customization
 
 ### Maternal Nutrition Data Structure
@@ -135,12 +233,18 @@ stages: {
 }
 ```
 
-### Component Architecture
+### Testing Components
 
-- **`LifeStagePicker`**: Global stage selector with URL persistence
-- **`SpotlightNutrients`**: Displays key nutrients for current stage
-- **`SafetyBadge`**: Shows UL risks and pregnancy cautions
-- **`EducationalOnlyNotice`**: Disclaimer component for educational content
+Use the test page at `/test-components` to see all components in isolation:
+
+```tsx
+import TestComponents from '@/test-components'
+
+// This renders all components with sample data
+export default function TestPage() {
+  return <TestComponents />
+}
+```
 
 ## Try the Live Demo
 
