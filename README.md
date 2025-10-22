@@ -87,76 +87,24 @@ https://app.com/?stage=t2  # Trimester 2
 https://app.com/?stage=breastfeeding  # Breastfeeding
 ```
 
-## 🎨 Herb Tint + Carrot Tops + Beetroot Design System
+## 🎨 Design System & Components
 
-### Color Palette & Typography
-The app uses the **Herb Tint + Carrot Tops + Beetroot** color scheme with professional typography:
+### Design Tokens
+The new UI uses a comprehensive design system with CSS custom properties defined in `apps/nutri-web/tokens.css`:
 
-**Colors:**
-- **bg/app**: `#F7FBF7` (Herb Tint) - Default app background
-- **surface/card**: `#FFFFFF` - Cards, sheets, and elevated surfaces
-- **border/hairline**: `#E0EAE0` - 1px borders on surfaces
-- **text/deep**: `#183A2E` - Primary text and icons
-- **accent/carrot**: `#E77C1F` - Primary CTAs and focus states
-- **accent/lettuce**: `#6FBF4A` - Secondary CTAs and progress bars
-- **accent/beet**: `#8E2043` - Tertiary emphasis (iron badges, supplement actions)
-- **ui/tan**: `#B6915E` - Quiet borders and muted elements
+```css
+/* Spacing: 4, 8, 12, 16, 24, 32 */
+--space-xs: 4px; --space-sm: 8px; --space-md: 12px; --space-lg: 16px;
 
-**Typography:**
-- **Headings (H1-H3)**: Lora serif with tightened tracking (-1%)
-- **Body text**: Source Sans 3 humanist sans-serif
-- **Tabular numbers**: Enabled for nutrition values and tables
-- **Font stacks**: Optimized for iOS (SF Pro), Android (Roboto), and web
+/* Typography scale */
+--font-size-h1: 28px; --line-height-h1: 36px;
+--font-size-body: 16px; --line-height-body: 24px;
 
-**Usage Rules:**
-- **Primary CTAs**: Solid carrot fill with white text
-- **Secondary actions**: Ghost lettuce (transparent fill, lettuce border, deep text)
-- **Iron emphasis**: Solid beet badges for T3 iron priority
-- **Progress bars**: Light neutral track (#E6EEE6) with lettuce fill
-- **Cards**: White surface with Herb Tint borders (1px hairlines, 12px radius)
-
-### Accessibility & Contrast Report
-
-**WCAG AA Compliance:**
-- ✅ **Text on Herb Tint**: Deep text (#183A2E) on Herb Tint (#F7FBF7) = 8.2:1 contrast ratio
-- ✅ **Primary buttons**: White text on carrot (#E77C1F) = 4.9:1 contrast ratio
-- ✅ **Secondary buttons**: Deep text on lettuce (#6FBF4A) = 4.6:1 contrast ratio
-- ✅ **Status badges**: White text on beet (#8E2043) = 5.2:1 contrast ratio
-- ✅ **Secondary ghost buttons**: Deep text with lettuce border = 4.6:1 contrast ratio
-- ✅ **Focus states**: 2px carrot outline meets AA requirements
-
-**Typography Features:**
-- **Tabular numbers**: Enabled for all numeric displays (targets, intake, percentages)
-- **Optimized tracking**: Headings tightened -1% to prevent early wrapping
-- **Font fallbacks**: iOS (SF Pro), Android (Roboto), Web (system fonts)
-
-**Visual Improvements:**
-- **Fresher background**: Herb Tint provides a lighter, more modern feel than cream
-- **Cleaner cards**: White surfaces with subtle Herb Tint borders (1px hairlines)
-- **Better elevation**: Minimal shadows with border-based separation
-- **Enhanced readability**: Improved contrast ratios throughout
-
-### Migration Details
-
-**From Cream to Herb Tint:**
-- Background: `#F6F3E9` → `#F7FBF7` (lighter, more minty appearance)
-- Cards: White surface with `#E0EAE0` borders (12px radius)
-- Progress bars: Light neutral track `#E6EEE6` with lettuce fill
-- Buttons: Secondary style changed to ghost (transparent + border)
-
-**Implementation Complete:**
-✅ Updated design tokens with Herb Tint color palette
-✅ Migrated all components to use new background and card styling
-✅ Updated button styles (carrot solid, lettuce ghost, beet solid)
-✅ Enhanced progress bars with neutral track and lettuce fill
-✅ Maintained all accessibility standards (8.2:1 contrast ratio)
-✅ Preserved typography system and tabular numbers
-
-**Preserved Elements:**
-- All Carrot Tops + Beetroot accent colors unchanged
-- Typography system (Lora + Source Sans 3) maintained
-- Tabular numbers for precision alignment
-- WCAG AA accessibility standards exceeded
+/* Status colors (WCAG AA compliant) */
+--color-status-ok: 34 197 94;
+--color-status-low: 245 158 11;
+--color-status-near-ul: 239 68 68;
+```
 
 ### Component Architecture
 
@@ -166,10 +114,10 @@ The app uses the **Herb Tint + Carrot Tops + Beetroot** color scheme with profes
 - **`FooterCTA`**: Sticky bottom actions that change by stage
 
 #### Interactive Components
-- **`LifeStageSegmented`**: Touch-friendly stage selector with progress visualization and carrot/lettuce color scheme
-- **`PrioritiesStrip`**: Horizontally scrollable priority nutrients with lettuce-themed chips
-- **`NutrientCard`**: Progress bars with lettuce fill, iron emphasis with beet badges, and ghost lettuce secondary buttons
-- **`SafetyBadge`**: UL risk warnings and pregnancy cautions with beet emphasis for iron
+- **`LifeStageSegmented`**: Touch-friendly stage selector with progress visualization
+- **`PrioritiesStrip`**: Horizontally scrollable priority nutrients with icons
+- **`NutrientCard`**: Progress bars, status indicators, and action buttons
+- **`SafetyBadge`**: UL risk warnings and pregnancy cautions
 - **`EducationalOnlyNotice`**: Educational disclaimer with dismiss functionality
 
 #### Data & State Management
@@ -189,30 +137,6 @@ import {
   FooterCTA
 } from '@/components/ui'
 
-// Complete page example with Herb Tint styling
-function MaternalNutritionPage() {
-  const { selectedStage, setSelectedStage } = useMaternalNutritionStore()
-
-  return (
-    <AppShell
-      title="Maternal nutrition"
-      subtitle="Focused guidance for conception, pregnancy, and breastfeeding"
-      actions={<TopBarActions />}
-      footerCTA={<FooterCTA currentStage={selectedStage} />}
-    >
-      <LifeStageSegmented
-        selectedStage={selectedStage}
-        onStageChange={setSelectedStage}
-      />
-
-      <PrioritiesStrip currentStage={selectedStage} />
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {nutrients.map(nutrient => (
-          <NutrientCard
-            key={nutrient.id}
-            nutrient={nutrient}
-            currentStage={selectedStage}
             onFoodSourcesClick={handleFoodSources}
             onLogIntakeClick={handleLogIntake}
           />
@@ -221,23 +145,6 @@ function MaternalNutritionPage() {
     </AppShell>
   )
 }
-```
-
-**Button Style Examples:**
-```tsx
-// Primary CTA (carrot solid)
-<button className="btn-primary">Log intake</button>
-
-// Secondary CTA (lettuce ghost)
-<button className="btn-secondary">Food sources</button>
-
-// Tertiary CTA (beet solid - limited use)
-<button className="btn-tertiary">Add supplement</button>
-
-// Progress bar (lettuce fill on neutral track)
-<div className="progress-track">
-  <div className="progress-fill" style={{width: '75%'}} />
-</div>
 ```
 
 ### Accessibility Features
