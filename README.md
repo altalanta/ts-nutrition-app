@@ -1,6 +1,6 @@
-# 🤰 Maternal Nutrition Tracker
+# 🌿 Herb Tint + Maternal Nutrition Tracker
 
-A TypeScript-based maternal nutrition platform providing evidence-informed guidance for conception, pregnancy, and breastfeeding. Track daily intake, compare against stage-specific nutrient targets, and receive personalized recommendations for optimal maternal and fetal health.
+A TypeScript-based maternal nutrition platform with a fresh, modern design providing evidence-informed guidance for conception, pregnancy, and breastfeeding. Track daily intake, compare against stage-specific nutrient targets, and receive personalized recommendations for optimal maternal and fetal health.
 
 ## Project Rules
 
@@ -137,29 +137,6 @@ import {
   FooterCTA
 } from '@/components/ui'
 
-// Complete page example
-function MaternalNutritionPage() {
-  const { selectedStage, setSelectedStage } = useMaternalNutritionStore()
-
-  return (
-    <AppShell
-      title="Maternal nutrition"
-      subtitle="Focused guidance for conception, pregnancy, and breastfeeding"
-      actions={<TopBarActions />}
-      footerCTA={<FooterCTA currentStage={selectedStage} />}
-    >
-      <LifeStageSegmented
-        selectedStage={selectedStage}
-        onStageChange={setSelectedStage}
-      />
-
-      <PrioritiesStrip currentStage={selectedStage} />
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {nutrients.map(nutrient => (
-          <NutrientCard
-            key={nutrient.id}
-            nutrient={nutrient}
             onFoodSourcesClick={handleFoodSources}
             onLogIntakeClick={handleLogIntake}
           />
